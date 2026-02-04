@@ -32,6 +32,17 @@
 
         .add-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; margin-top: 10px; cursor: pointer; }
 
+        /* 新增行程彈窗樣式 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; }
+        .modal-content h3 { margin-top: 0; color: var(--primary); }
+        .modal-content input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 1em; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 15px; }
+        .modal-btns button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-confirm { background: var(--primary); color: white; }
+        .btn-cancel { background: #eee; }
+
         /* Trip Detail View */
         #view-detail { display: none; }
         #view-detail.active { display: block; }
@@ -66,17 +77,22 @@
     <!-- View: Home (Trip List) -->
     <div id="view-home" class="active">
         <div id="trip-list">
-            <!-- Trips will be loaded here -->
-             <div class="trip-card" onclick="showTrip('osaka-2026')">
-                <div class="trip-icon">🇯🇵</div>
-                <div class="trip-info">
-                    <div class="trip-title">2026 大阪夏季之旅</div>
-                    <span class="trip-status">進行中</span>
-                </div>
-                <div>❯</div>
-             </div>
+            <!-- Trips will be loaded dynamically -->
         </div>
-        <button class="add-btn" onclick="alert('新增行程功能開發中！')">➕ 新增旅行行程</button>
+        <button class="add-btn" onclick="openModal()">➕ 新增旅行行程</button>
+    </div>
+
+    <!-- Modal for New Trip -->
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <h3>🌍 開展新旅程</h3>
+            <input type="text" id="new-trip-title" placeholder="例如：2026 東京之旅">
+            <input type="text" id="new-trip-icon" placeholder="選擇 Emoji (例如：🗼)" value="✈️">
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn-confirm" onclick="addNewTrip()">建立</button>
+            </div>
+        </div>
     </div>
 
     <!-- View: Trip Detail -->
@@ -116,16 +132,68 @@
 
 <script>
     let chartInstance = null;
+    let myTrips = JSON.parse(localStorage.getItem('my_trips')) || [
+        { id: 'osaka-2026', title: '2026 大阪夏季之旅', icon: '🇯🇵', status: '進行中' }
+    ];
+
+    function renderTripList() {
+        const listContainer = document.getElementById('trip-list');
+        listContainer.innerHTML = '';
+        myTrips.forEach(trip => {
+            const card = document.createElement('div');
+            card.className = 'trip-card';
+            card.onclick = () => showTrip(trip.id);
+            card.innerHTML = `
+                <div class="trip-icon">${trip.icon}</div>
+                <div class="trip-info">
+                    <div class="trip-title">${trip.title}</div>
+                    <span class="trip-status">${trip.status}</span>
+                </div>
+                <div>❯</div>
+            `;
+            listContainer.appendChild(card);
+        });
+    }
+
+    function openModal() { document.getElementById('add-modal').classList.add('active'); }
+    function closeModal() { document.getElementById('add-modal').classList.remove('active'); }
+
+    function addNewTrip() {
+        const title = document.getElementById('new-trip-title').value;
+        const icon = document.getElementById('new-trip-icon').value;
+        if (!title) return alert('請輸入行程名稱');
+
+        const newId = 'trip-' + Date.now();
+        const newTrip = { id: newId, title: title, icon: icon, status: '規劃中' };
+        
+        myTrips.push(newTrip);
+        localStorage.setItem('my_trips', JSON.stringify(myTrips));
+        
+        renderTripList();
+        closeModal();
+        showTrip(newId);
+        
+        // Reset inputs
+        document.getElementById('new-trip-title').value = '';
+    }
 
     function showTrip(tripId) {
+        const trip = myTrips.find(t => t.id === tripId);
+        if (!trip) return;
+
         document.getElementById('view-home').classList.remove('active');
         document.getElementById('view-detail').classList.add('active');
         document.getElementById('app-nav').classList.add('active');
         document.getElementById('btn-back').style.display = 'block';
+        document.getElementById('header-title').innerText = trip.title;
         
         if(tripId === 'osaka-2026') {
-            document.getElementById('header-title').innerText = '大阪夏季之旅';
             loadOsakaData();
+        } else {
+            // Placeholder for new trips
+            document.getElementById('flight-container').innerHTML = '暫無航班資料';
+            document.getElementById('itinerary-list').innerHTML = '快來規劃你的第一站吧！';
+            if(chartInstance) chartInstance.destroy();
         }
     }
 
@@ -145,37 +213,42 @@
     }
 
     async function loadOsakaData() {
-        const response = await fetch('data.json?t=' + new Date().getTime());
-        const data = await response.json();
-        const latest = data[data.length - 1];
+        try {
+            const response = await fetch('data.json?t=' + new Date().getTime());
+            const data = await response.json();
+            const latest = data[data.length - 1];
 
-        document.getElementById('flight-container').innerHTML = `
-            <div class="flight-row">
-                <div><strong>香港 ➔ 大阪</strong><br><small>UO686 | 7/18 08:45</small></div>
-                <div class="price">HK$ ${latest.uo686}</div>
-            </div>
-            <div class="flight-row">
-                <div><strong>大阪 ➔ 香港</strong><br><small>UO899 | 7/26 17:00</small></div>
-                <div class="price">HK$ ${latest.uo899}</div>
-            </div>
-        `;
+            document.getElementById('flight-container').innerHTML = `
+                <div class="flight-row">
+                    <div><strong>香港 ➔ 大阪</strong><br><small>UO686 | 7/18 08:45</small></div>
+                    <div class="price">HK$ ${latest.uo686.toLocaleString()}</div>
+                </div>
+                <div class="flight-row">
+                    <div><strong>大阪 ➔ 香港</strong><br><small>UO899 | 7/26 17:00</small></div>
+                    <div class="price">HK$ ${latest.uo899.toLocaleString()}</div>
+                </div>
+            `;
 
-        document.getElementById('itinerary-list').innerHTML = `
-            <div class="day"><div class="day-date">7月18日</div><div>🛫 出發 & 飯店入社</div></div>
-            <div class="day"><div class="day-date">7月26日</div><div>🛍️ 最後衝刺 & 返港</div></div>
-        `;
+            document.getElementById('itinerary-list').innerHTML = `
+                <div class="day"><div class="day-date">7月18日</div><div>🛫 出發 & 飯店入社</div></div>
+                <div class="day"><div class="day-date">7月26日</div><div>🛍️ 最後衝刺 & 返港</div></div>
+            `;
 
-        const ctx = document.getElementById('priceChart').getContext('2d');
-        if(chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.map(d => d.date.split(' ')[0]),
-                datasets: [{ label: '票價', data: data.map(d => d.total), borderColor: '#5d2d91', fill: true }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.date.split(' ')[0]),
+                    datasets: [{ label: '票價', data: data.map(d => d.total), borderColor: '#5d2d91', fill: true }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        } catch (e) { console.error(e); }
     }
+
+    // Initial load
+    renderTripList();
 </script>
 </body>
 </html>
