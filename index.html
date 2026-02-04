@@ -15,8 +15,14 @@
         }
         body { font-family: -apple-system, "PingFang HK", sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 70px; color: var(--text); }
         
+        /* Login View */
+        #view-login { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); color: white; justify-content: center; align-items: center; z-index: 5000; flex-direction: column; text-align: center; }
+        #view-login input { padding: 15px; border-radius: 12px; border: none; width: 80%; max-width: 300px; margin: 10px 0; font-size: 1.1em; text-align: center; }
+        #view-login button { background: var(--secondary); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1em; }
+
         header { background: var(--primary); color: white; padding: 20px 15px; text-align: center; position: sticky; top: 0; z-index: 100; }
         header h1 { margin: 0; font-size: 1.2em; }
+        .user-tag { position: absolute; right: 15px; top: 22px; font-size: 0.7em; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; }
 
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         
@@ -32,12 +38,12 @@
 
         .add-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; margin-top: 10px; cursor: pointer; }
 
-        /* 新增行程彈窗樣式 */
+        /* Modal Styles */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; }
         .modal-content h3 { margin-top: 0; color: var(--primary); }
-        .modal-content input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 1em; }
+        .modal-content input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 1em; color: #333; }
         .modal-btns { display: flex; gap: 10px; margin-top: 15px; }
         .modal-btns button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
         .btn-confirm { background: var(--primary); color: white; }
@@ -46,11 +52,9 @@
         /* Trip Detail View */
         #view-detail { display: none; }
         #view-detail.active { display: block; }
-        
         .back-btn { background: none; border: none; color: white; position: absolute; left: 15px; top: 20px; font-size: 1.2em; cursor: pointer; }
 
-        /* Navigation & Tabs (Inherited from previous version) */
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: none; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: none; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000; }
         nav.active { display: flex; }
         nav button { background: none; border: none; color: #888; font-size: 0.8em; display: flex; flex-direction: column; align-items: center; flex: 1; }
         nav button.active { color: var(--primary); font-weight: bold; }
@@ -68,17 +72,25 @@
 </head>
 <body>
 
+<!-- Login View -->
+<div id="view-login">
+    <div style="font-size: 4em; margin-bottom: 20px;">✈️</div>
+    <h2 style="margin-bottom: 30px;">旅行隨身 App</h2>
+    <input type="text" id="user-name" placeholder="你的名字">
+    <input type="password" id="access-key" placeholder="輸入密鑰">
+    <button onclick="handleLogin()">登入</button>
+</div>
+
 <header>
     <button id="btn-back" class="back-btn" onclick="showHome()" style="display:none;">❮</button>
     <h1 id="header-title">我的旅行</h1>
+    <span id="display-user" class="user-tag">未登入</span>
 </header>
 
 <div class="container">
-    <!-- View: Home (Trip List) -->
-    <div id="view-home" class="active">
-        <div id="trip-list">
-            <!-- Trips will be loaded dynamically -->
-        </div>
+    <!-- View: Home -->
+    <div id="view-home">
+        <div id="trip-list"></div>
         <button class="add-btn" onclick="openModal()">➕ 新增旅行行程</button>
     </div>
 
@@ -113,11 +125,9 @@
                     <h2 style="margin:0; border:none;">🗺️ 行程規劃</h2>
                     <button id="edit-btn" onclick="toggleEditItinerary()" style="background: var(--primary); color: white; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8em;">編輯</button>
                 </div>
-                <div id="itinerary-display" class="timeline">
-                    <!-- 顯示模式 -->
-                </div>
+                <div id="itinerary-display" class="timeline"></div>
                 <div id="itinerary-edit" style="display: none;">
-                    <textarea id="itinerary-input" style="width: 100%; height: 300px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; font-size: 0.9em; box-sizing: border-box;"></textarea>
+                    <textarea id="itinerary-input" style="width: 100%; height: 300px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; box-sizing: border-box;"></textarea>
                     <button onclick="saveItinerary()" style="width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; margin-top: 10px; font-weight: bold;">儲存行程</button>
                 </div>
             </div>
@@ -135,17 +145,36 @@
 </nav>
 
 <script>
+    const SECRET_KEY = 'szy2026'; // 預設密鑰
+    let currentUser = localStorage.getItem('app_user');
     let chartInstance = null;
     let currentTripId = null;
     let myTrips = JSON.parse(localStorage.getItem('my_trips')) || [
-        { 
-            id: 'osaka-2026', 
-            title: '2026 大阪夏季之旅', 
-            icon: '🇯🇵', 
-            status: '進行中',
-            itinerary: '7月18日\n🛫 出發 & 飯店入住\n\n7月26日\n🛍️ 最後衝刺 & 返港'
-        }
+        { id: 'osaka-2026', title: '2026 大阪夏季之旅', icon: '🇯🇵', status: '進行中', itinerary: '7月18日\n🛫 出發 & 飯店入住' }
     ];
+
+    function handleLogin() {
+        const name = document.getElementById('user-name').value;
+        const key = document.getElementById('access-key').value;
+        if (key === SECRET_KEY && name) {
+            localStorage.setItem('app_user', name);
+            currentUser = name;
+            document.getElementById('view-login').style.display = 'none';
+            document.getElementById('view-home').classList.add('active');
+            document.getElementById('display-user').innerText = name;
+            renderTripList();
+        } else {
+            alert('密鑰錯誤或名字未填！');
+        }
+    }
+
+    // 初始化登入狀態
+    if (currentUser) {
+        document.getElementById('view-login').style.display = 'none';
+        document.getElementById('view-home').classList.add('active');
+        document.getElementById('display-user').innerText = currentUser;
+        renderTripList();
+    }
 
     function renderTripList() {
         const listContainer = document.getElementById('trip-list');
@@ -154,14 +183,7 @@
             const card = document.createElement('div');
             card.className = 'trip-card';
             card.onclick = () => showTrip(trip.id);
-            card.innerHTML = `
-                <div class="trip-icon">${trip.icon}</div>
-                <div class="trip-info">
-                    <div class="trip-title">${trip.title}</div>
-                    <span class="trip-status">${trip.status}</span>
-                </div>
-                <div>❯</div>
-            `;
+            card.innerHTML = `<div class="trip-icon">${trip.icon}</div><div class="trip-info"><div class="trip-title">${trip.title}</div><span class="trip-status">${trip.status}</span></div><div>❯</div>`;
             listContainer.appendChild(card);
         });
     }
@@ -173,90 +195,24 @@
         const title = document.getElementById('new-trip-title').value;
         const icon = document.getElementById('new-trip-icon').value;
         if (!title) return alert('請輸入行程名稱');
-
-        const newId = 'trip-' + Date.now();
-        const newTrip = { 
-            id: newId, 
-            title: title, 
-            icon: icon, 
-            status: '規劃中',
-            itinerary: '第一日\n在此輸入行程...'
-        };
-        
+        const newTrip = { id: 'trip-' + Date.now(), title, icon, status: '規劃中', itinerary: '第一日\n在此輸入行程...' };
         myTrips.push(newTrip);
         localStorage.setItem('my_trips', JSON.stringify(myTrips));
-        
-        renderTripList();
-        closeModal();
-        showTrip(newId);
-        document.getElementById('new-trip-title').value = '';
+        renderTripList(); closeModal(); showTrip(newTrip.id);
     }
 
     function showTrip(tripId) {
         currentTripId = tripId;
         const trip = myTrips.find(t => t.id === tripId);
         if (!trip) return;
-
         document.getElementById('view-home').classList.remove('active');
         document.getElementById('view-detail').classList.add('active');
         document.getElementById('app-nav').classList.add('active');
         document.getElementById('btn-back').style.display = 'block';
         document.getElementById('header-title').innerText = trip.title;
-        
-        // 渲染行程內容
         displayItinerary(trip.itinerary);
-        
-        if(tripId === 'osaka-2026') {
-            loadOsakaData();
-        } else {
-            document.getElementById('flight-container').innerHTML = '<p style="color:#999">暫無航班資料</p>';
-            if(chartInstance) chartInstance.destroy();
-        }
-    }
-
-    function displayItinerary(content) {
-        const display = document.getElementById('itinerary-display');
-        const lines = content.split('\n');
-        let html = '';
-        lines.forEach(line => {
-            if (line.trim().length === 0) return;
-            // 簡單判斷：如果包含日期字眼就加粗
-            if (line.match(/日|Day/)) {
-                html += `<div class="day"><div class="day-date">${line}</div>`;
-            } else {
-                html += `<div>${line}</div>`;
-            }
-            if (line.match(/日|Day/)) { /* keep open */ } else { html += `</div>`; }
-        });
-        display.innerHTML = html || '尚無行程內容';
-        document.getElementById('itinerary-input').value = content;
-    }
-
-    function toggleEditItinerary() {
-        const display = document.getElementById('itinerary-display');
-        const edit = document.getElementById('itinerary-edit');
-        const btn = document.getElementById('edit-btn');
-        
-        if (edit.style.display === 'none') {
-            edit.style.display = 'block';
-            display.style.display = 'none';
-            btn.innerText = '取消';
-        } else {
-            edit.style.display = 'none';
-            display.style.display = 'block';
-            btn.innerText = '編輯';
-        }
-    }
-
-    function saveItinerary() {
-        const content = document.getElementById('itinerary-input').value;
-        const tripIndex = myTrips.findIndex(t => t.id === currentTripId);
-        if (tripIndex > -1) {
-            myTrips[tripIndex].itinerary = content;
-            localStorage.setItem('my_trips', JSON.stringify(myTrips));
-            displayItinerary(content);
-            toggleEditItinerary();
-        }
+        if(tripId === 'osaka-2026') loadOsakaData();
+        else document.getElementById('flight-container').innerHTML = '<p style="color:#999">暫無航班資料</p>';
     }
 
     function showHome() {
@@ -274,43 +230,41 @@
         document.getElementById('nav-' + tabId).classList.add('active');
     }
 
+    function displayItinerary(content) {
+        const display = document.getElementById('itinerary-display');
+        display.innerHTML = content.split('\n').map(line => line.match(/日|Day/) ? `<div class="day"><div class="day-date">${line}</div>` : `<div>${line}</div>`).join('') || '尚無內容';
+        document.getElementById('itinerary-input').value = content;
+    }
+
+    function toggleEditItinerary() {
+        const display = document.getElementById('itinerary-display'), edit = document.getElementById('itinerary-edit'), btn = document.getElementById('edit-btn');
+        const isEdit = edit.style.display === 'none';
+        edit.style.display = isEdit ? 'block' : 'none';
+        display.style.display = isEdit ? 'none' : 'block';
+        btn.innerText = isEdit ? '取消' : '編輯';
+    }
+
+    function saveItinerary() {
+        const content = document.getElementById('itinerary-input').value;
+        const idx = myTrips.findIndex(t => t.id === currentTripId);
+        if (idx > -1) {
+            myTrips[idx].itinerary = content;
+            localStorage.setItem('my_trips', JSON.stringify(myTrips));
+            displayItinerary(content); toggleEditItinerary();
+        }
+    }
+
     async function loadOsakaData() {
         try {
             const response = await fetch('data.json?t=' + new Date().getTime());
             const data = await response.json();
             const latest = data[data.length - 1];
-
-            document.getElementById('flight-container').innerHTML = `
-                <div class="flight-row">
-                    <div><strong>香港 ➔ 大阪</strong><br><small>UO686 | 7/18 08:45</small></div>
-                    <div class="price">HK$ ${latest.uo686.toLocaleString()}</div>
-                </div>
-                <div class="flight-row">
-                    <div><strong>大阪 ➔ 香港</strong><br><small>UO899 | 7/26 17:00</small></div>
-                    <div class="price">HK$ ${latest.uo899.toLocaleString()}</div>
-                </div>
-            `;
-
-            document.getElementById('itinerary-list').innerHTML = `
-                <div class="day"><div class="day-date">7月18日</div><div>🛫 出發 & 飯店入社</div></div>
-                <div class="day"><div class="day-date">7月26日</div><div>🛍️ 最後衝刺 & 返港</div></div>
-            `;
-
+            document.getElementById('flight-container').innerHTML = `<div class="flight-row"><div><strong>香港 ➔ 大阪</strong><br><small>UO686 | 7/18 08:45</small></div><div class="price">HK$ ${latest.uo686}</div></div><div class="flight-row"><div><strong>大阪 ➔ 香港</strong><br><small>UO899 | 7/26 17:00</small></div><div class="price">HK$ ${latest.uo899}</div></div>`;
             const ctx = document.getElementById('priceChart').getContext('2d');
             if(chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map(d => d.date.split(' ')[0]),
-                    datasets: [{ label: '票價', data: data.map(d => d.total), borderColor: '#5d2d91', fill: true }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            chartInstance = new Chart(ctx, { type: 'line', data: { labels: data.map(d => d.date.split(' ')[0]), datasets: [{ label: '票價', data: data.map(d => d.total), borderColor: '#5d2d91', fill: true }] }, options: { responsive: true, maintainAspectRatio: false } });
         } catch (e) { console.error(e); }
     }
-
-    // Initial load
-    renderTripList();
 </script>
 </body>
 </html>
