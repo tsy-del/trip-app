@@ -187,6 +187,11 @@
             streetViewControl: false,
             fullscreenControl: false
         });
+
+        // 加入地址自動補完功能
+        const input = document.getElementById('item-location');
+        const autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo('bounds', googleMap);
     }
 
     function renderTripList() {
