@@ -5,42 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的旅行隨身 App | SzeYuen</title>
     <style>
-        :root { --primary: #5d2d91; --secondary: #e91e63; --bg: #f4f6f9; --card-bg: #ffffff; --text: #1c1e21; }
-        body { font-family: -apple-system, "PingFang HK", sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 20px; color: var(--text); }
+        :root { --primary: #e91e63; --secondary: #5d2d91; --bg: #f8f9fb; --card-bg: #ffffff; --text: #333; }
+        body { font-family: -apple-system, "PingFang HK", sans-serif; background-color: var(--bg); margin: 0; color: var(--text); padding-bottom: 20px; }
         
-        #view-login { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); color: white; justify-content: center; align-items: center; z-index: 5000; flex-direction: column; text-align: center; }
+        /* Login */
+        #view-login { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--secondary); color: white; justify-content: center; align-items: center; z-index: 5000; flex-direction: column; }
         #view-login input { padding: 15px; border-radius: 12px; border: none; width: 80%; max-width: 300px; margin: 10px 0; text-align: center; }
-        #view-login button { background: var(--secondary); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: bold; }
+        #view-login button { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: bold; }
 
-        header { background: var(--primary); color: white; padding: 20px 15px; text-align: center; position: sticky; top: 0; z-index: 100; }
-        .user-tag { position: absolute; right: 15px; top: 22px; font-size: 0.7em; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; }
-        .back-btn { background: none; border: none; color: white; position: absolute; left: 15px; top: 20px; font-size: 1.2em; }
+        header { background: white; color: #333; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 1.1em; flex: 1; }
+        .back-btn { font-size: 1.2em; cursor: pointer; padding: 5px; }
+        .user-tag { font-size: 0.7em; background: #eee; padding: 2px 8px; border-radius: 10px; }
 
-        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .container { max-width: 600px; margin: 0 auto; }
         
-        #view-home { display: none; }
+        /* Home Trip Cards */
+        #view-home { display: none; padding: 15px; }
         #view-home.active { display: block; }
-        .trip-card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .trip-card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
 
+        /* Detail View */
         #view-detail { display: none; }
         #view-detail.active { display: block; }
 
-        .day-tabs { display: flex; overflow-x: auto; white-space: nowrap; padding: 10px 0; margin-bottom: 15px; -webkit-overflow-scrolling: touch; }
+        /* Funliday Date Tabs */
+        .day-tabs { display: flex; overflow-x: auto; white-space: nowrap; background: white; padding: 10px 15px; border-bottom: 1px solid #eee; position: sticky; top: 54px; z-index: 90; }
         .day-tabs::-webkit-scrollbar { display: none; }
-        .day-tab { padding: 8px 20px; background: white; border-radius: 20px; margin-right: 10px; font-size: 0.9em; border: 1px solid #ddd; flex-shrink: 0; }
-        .day-tab.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: bold; }
+        .day-tab { display: flex; flex-direction: column; align-items: center; padding: 8px 15px; margin-right: 10px; border-radius: 8px; color: #999; min-width: 60px; transition: all 0.2s; }
+        .day-tab .tab-date { font-size: 0.75em; margin-bottom: 4px; }
+        .day-tab .tab-name { font-size: 0.9em; font-weight: bold; }
+        .day-tab.active { color: var(--primary); background: rgba(233, 30, 99, 0.05); }
+        .day-tab.active::after { content: ''; width: 20px; height: 3px; background: var(--primary); margin-top: 5px; border-radius: 2px; }
 
-        .item-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .item-time { color: var(--primary); font-weight: bold; font-size: 0.9em; width: 45px; }
+        /* Funliday Style Itinerary List */
+        #itinerary-list { padding: 15px; }
+        .item-wrapper { position: relative; margin-bottom: 10px; }
+        .stay-time { padding-left: 65px; font-size: 0.8em; color: var(--primary); margin: 5px 0; font-weight: bold; }
+        
+        .item-card { background: white; border-radius: 12px; padding: 15px; display: flex; gap: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
+        .item-left { display: flex; flex-direction: column; align-items: center; width: 45px; flex-shrink: 0; }
+        .item-time-top { font-size: 0.7em; color: #999; }
+        .item-icon-circle { width: 36px; height: 36px; background: #f0f2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 5px 0; font-size: 1.2em; }
+        .item-time-bottom { font-size: 0.7em; color: #999; }
+
         .item-main { flex: 1; }
-        .item-title { font-weight: bold; font-size: 1.05em; margin-bottom: 4px; }
-        .item-remark { font-size: 0.85em; color: #777; margin-bottom: 8px; }
-        .badge { font-size: 0.75em; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 5px; }
-        .badge-price { background: #fff3e0; color: #ff9800; border: 1px solid #ffe0b2; margin-right: 5px; }
-        .badge-map { background: #e3f2fd; color: #2196f3; border: 1px solid #bbdefb; cursor: pointer; }
+        .item-title { font-weight: bold; font-size: 1.05em; margin-bottom: 4px; color: #222; }
+        .item-subtitle { font-size: 0.85em; color: #888; margin-bottom: 5px; }
+        .item-location-text { font-size: 0.8em; color: #999; margin-bottom: 10px; display: block; }
+        
+        .item-footer { display: flex; gap: 8px; border-top: 1px solid #f9f9f9; padding-top: 8px; }
+        .badge { font-size: 0.7em; padding: 3px 10px; border-radius: 15px; border: 1px solid #ddd; background: #fff; color: #666; }
+        .badge-map { border-color: #2196f3; color: #2196f3; }
 
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; background: var(--secondary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 900; border: none; }
+        /* Floating Add */
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3); z-index: 1000; border: none; }
 
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: flex-end; }
         .modal.active { display: flex; }
         .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 20px; animation: slideUp 0.3s ease-out; }
@@ -63,22 +84,17 @@
 </div>
 
 <header>
-    <button id="btn-back" class="back-btn" onclick="showHome()" style="display:none;">❮</button>
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <h1 id="header-title">我的旅行</h1>
-        <div id="header-dates" class="trip-dates-header"></div>
-    </div>
+    <div class="back-btn" id="btn-back" onclick="showHome()" style="display:none;">❮</div>
+    <h1 id="header-title">我的行程</h1>
     <span id="display-user" class="user-tag" onclick="handleLogout()" style="cursor:pointer;">未登入</span>
 </header>
 
 <div class="container">
-    <!-- Home View -->
     <div id="view-home">
         <div id="trip-list"></div>
-        <button style="width:100%; background:var(--primary); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;" onclick="openTripModal()">➕ 新增旅行行程</button>
+        <button style="width:100%; background:var(--secondary); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;" onclick="openTripModal()">➕ 新增旅行行程</button>
     </div>
 
-    <!-- Detail View (Directly Itinerary) -->
     <div id="view-detail">
         <div class="day-tabs" id="day-tabs"></div>
         <div id="itinerary-list"></div>
@@ -98,27 +114,14 @@
 </div></div>
 
 <div id="item-modal" class="modal"><div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h3 id="item-modal-title" style="margin:0;">新增活動</h3>
-        <button onclick="toggleFlightMode()" id="flight-mode-btn" style="background:#f0f0f0; border:1px solid #ddd; padding:4px 10px; border-radius:15px; font-size:0.8em;">✈️ 航班模式</button>
-    </div>
-    <div id="normal-fields">
-        <div class="form-row"><label>時間</label><input type="time" id="item-time" value="09:00"></div>
-        <div class="form-row"><label>活動</label><input type="text" id="item-name"></div>
-        <div class="form-row"><label>地點</label><input type="text" id="item-location"></div>
-        <div class="form-row"><label>備註</label><textarea id="item-remark" rows="2"></textarea></div>
-        <div class="form-row"><label>預算</label><input type="number" id="item-budget"></div>
-    </div>
-    <div id="flight-fields" style="display:none;">
-        <div class="form-row"><label>起飛時間</label><input type="time" id="flight-time" value="09:00"></div>
-        <div class="form-row"><label>航空公司</label><input type="text" id="flight-airline" placeholder="例如：國泰航空"></div>
-        <div class="form-row"><label>航班編號</label><input type="text" id="flight-no" placeholder="例如：CX506"></div>
-        <div class="form-row"><label>飛行時間 (小時)</label><input type="text" id="flight-duration" placeholder="例如：4h 15m"></div>
-    </div>
-    <div class="modal-footer">
-        <button style="background:#eee;" onclick="closeItemModal()">取消</button>
-        <button style="background:var(--primary);color:white;" onclick="saveItem()">儲存</button>
-    </div>
+    <h3>新增活動</h3>
+    <div class="form-row"><label>時間 (開始)</label><input type="time" id="item-time" value="09:00"></div>
+    <div class="form-row"><label>時間 (結束/停留至)</label><input type="time" id="item-time-end" value="10:00"></div>
+    <div class="form-row"><label>活動名稱 (中)</label><input type="text" id="item-name"></div>
+    <div class="form-row"><label>副標題 (日/英)</label><input type="text" id="item-sub"></div>
+    <div class="form-row"><label>地點/地址</label><input type="text" id="item-location"></div>
+    <div class="form-row"><label>備註</label><textarea id="item-remark" rows="2"></textarea></div>
+    <div class="modal-footer"><button style="background:#eee;" onclick="closeItemModal()">取消</button><button style="background:var(--primary);color:white;" onclick="saveItem()">儲存</button></div>
 </div></div>
 
 <script>
@@ -161,7 +164,7 @@
     }
 
     function renderTripList() {
-        document.getElementById('trip-list').innerHTML = myTrips.map(t => `<div class="trip-card" onclick="showTrip('${t.id}')"><div style="flex:1;"><div style="font-weight:bold;">${t.title}</div><small style="color:#999;">${t.startDate} ~ ${t.endDate}</small></div><div>❯</div></div>`).join('');
+        document.getElementById('trip-list').innerHTML = myTrips.map(t => `<div class="trip-card" onclick="showTrip('${t.id}')"><div style="flex:1;"><div style="font-weight:bold;font-size:1.1em;margin-bottom:5px;">${t.title}</div><small style="color:#999;">${t.startDate} ~ ${t.endDate}</small></div><div>❯</div></div>`).join('');
     }
 
     function showTrip(tid) {
@@ -171,29 +174,61 @@
         document.getElementById('view-detail').classList.add('active');
         document.getElementById('btn-back').style.display = 'block';
         document.getElementById('header-title').innerText = t.title;
-        document.getElementById('header-dates').innerText = `${t.startDate} ~ ${t.endDate}`;
         renderDayTabs(); renderItinerary();
     }
 
     function renderDayTabs() {
         const t = myTrips.find(x => x.id === currentTripId);
-        const days = Math.ceil((new Date(t.endDate) - new Date(t.startDate)) / 86400000) + 1;
-        let h = ''; for(let i=1; i<=days; i++) h += `<div class="day-tab ${i===currentDay?'active':''}" onclick="currentDay=${i};renderDayTabs();renderItinerary();">第 ${i} 天</div>`;
+        const start = new Date(t.startDate);
+        const days = Math.ceil((new Date(t.endDate) - start) / 86400000) + 1;
+        let h = ''; 
+        for(let i=1; i<=days; i++) {
+            const currDate = new Date(start);
+            currDate.setDate(start.getDate() + (i-1));
+            const dateStr = `${currDate.getMonth()+1}/${currDate.getDate()}`;
+            h += `<div class="day-tab ${i===currentDay?'active':''}" onclick="currentDay=${i};renderDayTabs();renderItinerary();"><div class="tab-date">${dateStr}</div><div class="tab-name">第 ${i} 天</div></div>`;
+        }
         document.getElementById('day-tabs').innerHTML = h;
     }
 
+    function calculateDuration(start, end) {
+        let [sH, sM] = start.split(':').map(Number);
+        let [eH, eM] = end.split(':').map(Number);
+        let diff = (eH * 60 + eM) - (sH * 60 + sM);
+        if (diff < 0) diff += 1440;
+        let h = Math.floor(diff / 60);
+        let m = diff % 60;
+        return (h > 0 ? h + '小時' : '') + (m > 0 ? m + '分' : '');
+    }
+
     function renderItinerary() {
-        const items = (myTrips.find(x=>x.id===currentTripId).items || []).filter(x=>x.day===currentDay).sort((a,b)=>a.time.localeCompare(b.time));
-        document.getElementById('itinerary-list').innerHTML = items.length ? items.map(item => `
-            <div class="item-card">
-                <div class="item-time">${item.time}</div>
-                <div class="item-main">
-                    <div class="item-title">${item.name}</div>
-                    ${item.remark ? `<div class="item-remark">${item.remark}</div>` : ''}
-                    ${item.budget > 0 ? `<span class="badge badge-price">¥ ${item.budget.toLocaleString()}</span>` : ''}
-                    ${item.location ? `<span class="badge badge-map" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location)}')">📍 地圖</span>` : ''}
-                </div>
-            </div>`).join('') : '<p style="text-align:center;color:#999;padding:40px;">這天還沒有行程</p>';
+        const trip = myTrips.find(x=>x.id===currentTripId);
+        const items = (trip.items || []).filter(x=>x.day===currentDay).sort((a,b)=>a.time.localeCompare(b.time));
+        let h = '';
+        items.forEach((item, idx) => {
+            const duration = item.endTime ? calculateDuration(item.time, item.endTime) : '';
+            h += `
+                <div class="item-wrapper">
+                    <div class="item-card">
+                        <div class="item-left">
+                            <div class="item-time-top">${item.time}</div>
+                            <div class="item-icon-circle">${item.icon || '📍'}</div>
+                            <div class="item-time-bottom">${item.endTime || '--:--'}</div>
+                        </div>
+                        <div class="item-main">
+                            <div class="item-title">${item.name}</div>
+                            <div class="item-subtitle">${item.subtitle || ''}</div>
+                            <small class="item-location-text">${item.location || ''}</small>
+                            <div class="item-footer">
+                                ${item.location ? `<div class="badge badge-map" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location)}')">🗺️ 查看地圖</div>` : ''}
+                                ${item.remark ? `<div class="badge">📝 備註</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    ${duration ? `<div class="stay-time">⏳ 停留 ${duration}</div>` : ''}
+                </div>`;
+        });
+        document.getElementById('itinerary-list').innerHTML = h || '<p style="text-align:center;color:#999;padding:40px;">這天還沒有行程</p>';
     }
 
     function openTripModal() { document.getElementById('trip-modal').classList.add('active'); }
@@ -204,66 +239,23 @@
         const nt = { id:'trip-'+Date.now(), title:t, startDate:s, endDate:e, items:[] };
         myTrips.push(nt); syncToCloud(); renderTripList(); closeTripModal(); showTrip(nt.id);
     }
+    
     function openItemModal() { document.getElementById('item-modal').classList.add('active'); }
     function closeItemModal() { document.getElementById('item-modal').classList.remove('active'); }
-    let isFlightMode = false;
-    function toggleFlightMode() {
-        isFlightMode = !isFlightMode;
-        document.getElementById('normal-fields').style.display = isFlightMode ? 'none' : 'block';
-        document.getElementById('flight-fields').style.display = isFlightMode ? 'block' : 'none';
-        document.getElementById('flight-mode-btn').innerText = isFlightMode ? '📝 普通模式' : '✈️ 航班模式';
-        document.getElementById('item-modal-title').innerText = isFlightMode ? '添加航班' : '新增活動';
-    }
-
     function saveItem() {
         const trip = myTrips.find(x=>x.id===currentTripId); if(!trip.items) trip.items = [];
-        
-        if (isFlightMode) {
-            const fTime = document.getElementById('flight-time').value;
-            const airline = document.getElementById('flight-airline').value;
-            const fNo = document.getElementById('flight-no').value;
-            const duration = document.getElementById('flight-duration').value;
-            
-            // 計算前2小時
-            let [h, m] = fTime.split(':').map(Number);
-            let checkInH = (h - 2 + 24) % 24;
-            const checkInTime = `${String(checkInH).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-
-            // 添加機場報到行程
-            trip.items.push({
-                id: Date.now(), day: currentDay, time: checkInTime,
-                name: "🚀 抵達機場辦理登機 & 報到",
-                remark: "建議提前2小時到達以預留時間辦理手續及安檢", budget: 0
-            });
-
-            // 添加航班行程
-            trip.items.push({
-                id: Date.now() + 1, day: currentDay, time: fTime,
-                name: `✈️ ${airline} ${fNo}`,
-                remark: `預計飛行時間: ${duration}`, budget: 0
-            });
-            
-            // 重設航班欄位
-            document.getElementById('flight-airline').value = '';
-            document.getElementById('flight-no').value = '';
-            document.getElementById('flight-duration').value = '';
-        } else {
-            trip.items.push({ 
-                id: Date.now(), day: currentDay, 
-                time: document.getElementById('item-time').value, 
-                name: document.getElementById('item-name').value, 
-                location: document.getElementById('item-location').value, 
-                remark: document.getElementById('item-remark').value, 
-                budget: parseInt(document.getElementById('item-budget').value)||0 
-            });
-            document.getElementById('item-name').value = ''; 
-            document.getElementById('item-location').value = '';
-            document.getElementById('item-remark').value = '';
-            document.getElementById('item-budget').value = 0;
-        }
-
+        trip.items.push({ 
+            id:Date.now(), day:currentDay, 
+            time:document.getElementById('item-time').value, 
+            endTime:document.getElementById('item-time-end').value,
+            name:document.getElementById('item-name').value, 
+            subtitle:document.getElementById('item-sub').value,
+            location:document.getElementById('item-location').value, 
+            remark:document.getElementById('item-remark').value,
+            icon: '📍'
+        });
         syncToCloud(); renderItinerary(); closeItemModal();
-        if (isFlightMode) toggleFlightMode(); // 回到普通模式
+        document.getElementById('item-name').value = ''; document.getElementById('item-sub').value = ''; document.getElementById('item-location').value = '';
     }
     function showHome() { location.reload(); }
 </script>
