@@ -155,19 +155,25 @@
     let myTrips = [];
 
     async function syncFromCloud() {
+        const statusEl = document.getElementById('trip-list');
         try {
             const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips.json?t=${Date.now()}`, {
-                headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                headers: { 
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
             });
+            if (!resp.ok) throw new Error('Network response was not ok');
             const file = await resp.json();
             const content = decodeURIComponent(escape(atob(file.content)));
             myTrips = JSON.parse(content);
             localStorage.setItem('my_trips', JSON.stringify(myTrips));
             renderTripList();
         } catch (e) {
-            console.error('Cloud sync failed, using local backup', e);
+            console.error('Cloud sync failed', e);
+            statusEl.innerHTML = `<p style="text-align:center;color:red;padding:20px;">同步失敗: ${e.message}<br><button onclick="syncFromCloud()" style="margin-top:10px;padding:5px 10px;">重試</button></p>`;
             myTrips = JSON.parse(localStorage.getItem('my_trips')) || [];
-            renderTripList();
+            if(myTrips.length > 0) renderTripList();
         }
     }
 
