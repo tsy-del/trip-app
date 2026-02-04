@@ -15,7 +15,6 @@
         }
         body { font-family: -apple-system, "PingFang HK", sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 70px; color: var(--text); }
         
-        /* Login View */
         #view-login { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); color: white; justify-content: center; align-items: center; z-index: 5000; flex-direction: column; text-align: center; }
         #view-login input { padding: 15px; border-radius: 12px; border: none; width: 80%; max-width: 300px; margin: 10px 0; font-size: 1.1em; text-align: center; }
         #view-login button { background: var(--secondary); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1em; margin-top: 10px; }
@@ -26,59 +25,45 @@
 
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         
-        /* Trip List View */
         #view-home { display: none; }
         #view-home.active { display: block; }
-        .trip-card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .trip-card:active { transform: scale(0.98); }
+        .trip-card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .trip-icon { font-size: 2em; margin-right: 15px; }
         .trip-info { flex: 1; }
-        .trip-title { font-weight: bold; font-size: 1.1em; margin-bottom: 4px; }
-        .trip-status { font-size: 0.8em; color: var(--primary); background: #eee; padding: 2px 8px; border-radius: 10px; }
+        .trip-title { font-weight: bold; }
 
-        .add-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        .add-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; margin-top: 10px; }
 
-        /* Modal Styles */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; }
-        .modal-content h3 { margin-top: 0; color: var(--primary); }
-        .modal-content input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 1em; color: #333; }
-        .modal-btns { display: flex; gap: 10px; margin-top: 15px; }
-        .modal-btns button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-confirm { background: var(--primary); color: white; }
-        .btn-cancel { background: #eee; }
-
-        /* Trip Detail View */
         #view-detail { display: none; }
         #view-detail.active { display: block; }
-        .back-btn { background: none; border: none; color: white; position: absolute; left: 15px; top: 20px; font-size: 1.2em; cursor: pointer; }
+        .back-btn { background: none; border: none; color: white; position: absolute; left: 15px; top: 20px; font-size: 1.2em; }
 
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: none; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000; }
         nav.active { display: flex; }
-        nav button { background: none; border: none; color: #888; font-size: 0.8em; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        nav button { background: none; border: none; color: #888; font-size: 0.8em; flex: 1; }
         nav button.active { color: var(--primary); font-weight: bold; }
 
         .card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        
-        .flight-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .price { font-weight: bold; color: var(--secondary); font-size: 1.2em; }
-        .timeline { position: relative; padding-left: 20px; border-left: 2px solid #ddd; }
-        .day { margin-bottom: 20px; }
-        .day-date { font-weight: bold; color: var(--primary); }
+
+        /* 行程卡片樣式 */
+        .timeline { position: relative; padding-left: 20px; border-left: 2px solid #eee; margin-left: 10px; }
+        .day-block { margin-bottom: 30px; }
+        .day-label { font-weight: bold; color: var(--primary); margin-bottom: 10px; position: relative; }
+        .day-label::before { content: ''; position: absolute; left: -26px; top: 6px; width: 10px; height: 10px; background: var(--primary); border-radius: 50%; border: 2px solid white; }
+        .item-card { background: #f8f9fa; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
+        .item-text { font-size: 0.95em; color: #333; }
+        .map-btn { background: white; border: 1px solid #ddd; padding: 5px 10px; border-radius: 8px; font-size: 0.8em; color: var(--primary); cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
-<!-- Login View -->
 <div id="view-login">
     <div style="font-size: 4em; margin-bottom: 20px;">✈️</div>
     <h2 style="margin-bottom: 30px;">旅行隨身 App</h2>
     <input type="text" id="user-name" placeholder="你的名字">
     <input type="password" id="access-key" placeholder="輸入 Token">
-    <p style="font-size: 0.7em; color: rgba(255,255,255,0.7); width: 80%; margin-top: -5px;">* 請輸入 GitHub Token 以開啟雲端同步</p>
     <button onclick="handleLogin()">登入並同步</button>
 </div>
 
@@ -94,61 +79,40 @@
         <button class="add-btn" onclick="openModal()">➕ 新增旅行行程</button>
     </div>
 
-    <div id="add-modal" class="modal">
-        <div class="modal-content">
-            <h3>🌍 開展新旅程</h3>
-            <input type="text" id="new-trip-title" placeholder="例如：2026 東京之旅">
-            <input type="text" id="new-trip-icon" placeholder="選擇 Emoji (例如：🗼)" value="✈️">
-            <div class="modal-btns">
-                <button class="btn-cancel" onclick="closeModal()">取消</button>
-                <button class="btn-confirm" onclick="addNewTrip()">建立</button>
-            </div>
-        </div>
-    </div>
-
     <div id="view-detail">
         <div id="tab-overview" class="tab-content active">
-            <div class="card">
-                <h2>✈️ 航班追蹤</h2>
-                <div id="flight-container">載入中...</div>
-            </div>
-            <div class="card">
-                <h2>📈 票價走勢</h2>
-                <div style="height:200px"><canvas id="priceChart"></canvas></div>
-            </div>
+            <div class="card"><h2>✈️ 航班追蹤</h2><div id="flight-container">載入中...</div></div>
+            <div class="card"><h2>📈 票價走勢</h2><div style="height:200px"><canvas id="priceChart"></canvas></div></div>
         </div>
         <div id="tab-itinerary" class="tab-content">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 15px;">
-                    <h2 style="margin:0; border:none;">🗺️ 行程規劃</h2>
-                    <button id="edit-btn" onclick="toggleEditItinerary()" style="background: var(--primary); color: white; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8em;">編輯</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 style="margin:0;">🗺️ 行程規劃</h2>
+                    <div id="total-budget-tag" style="font-size: 0.8em; background: #fff3e0; color: #ff9800; padding: 4px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffe0b2;">總預算: --</div>
+                    <button id="edit-btn" onclick="toggleEditItinerary()" style="background:var(--primary); color:white; border:none; padding:5px 12px; border-radius:8px;">編輯</button>
                 </div>
                 <div id="itinerary-display" class="timeline"></div>
                 <div id="itinerary-edit" style="display: none;">
-                    <textarea id="itinerary-input" style="width: 100%; height: 300px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; box-sizing: border-box;"></textarea>
-                    <button onclick="saveItinerary()" style="width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; margin-top: 10px; font-weight: bold;">儲存行程</button>
+                    <textarea id="itinerary-input" style="width: 100%; height: 300px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box;"></textarea>
+                    <button onclick="saveItinerary()" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:10px; margin-top:10px;">儲存行程</button>
                 </div>
             </div>
-        </div>
-        <div id="tab-budget" class="tab-content">
-            <div class="card"><h2>💰 開支記錄</h2><p>即將推出...</p></div>
         </div>
     </div>
 </div>
 
 <nav id="app-nav">
-    <button onclick="switchTab('overview')" id="nav-overview" class="active"><span>📊</span><br>概覽</button>
-    <button onclick="switchTab('itinerary')" id="nav-itinerary"><span>🗺️</span><br>行程</button>
-    <button onclick="switchTab('budget')" id="nav-budget"><span>💰</span><br>預算</button>
+    <button onclick="switchTab('overview')" id="nav-overview" class="active">📊<br>概覽</button>
+    <button onclick="switchTab('itinerary')" id="nav-itinerary">🗺️<br>行程</button>
 </nav>
 
 <script>
     const DATA_REPO = 'tsy-del/japan-trip-2026';
-    let GITHUB_TOKEN = localStorage.getItem('app_token') || '';
+    let GITHUB_TOKEN = localStorage.getItem('app_token');
     let currentUser = localStorage.getItem('app_user');
-    let chartInstance = null;
-    let currentTripId = null;
     let myTrips = [];
+    let currentTripId = null;
+    let chartInstance = null;
 
     function handleLogin() {
         const name = document.getElementById('user-name').value;
@@ -156,24 +120,11 @@
         if (name && token) {
             localStorage.setItem('app_user', name);
             localStorage.setItem('app_token', token);
-            currentUser = name;
-            GITHUB_TOKEN = token;
-            document.getElementById('view-login').style.display = 'none';
-            document.getElementById('view-home').classList.add('active');
-            document.getElementById('display-user').innerText = name + ' ⇥';
-            syncFromCloud();
-        } else {
-            alert('請輸入名字和 Token！');
-        }
-    }
-
-    function handleLogout() {
-        if(confirm('確定要登出嗎？')) {
-            localStorage.removeItem('app_user');
-            localStorage.removeItem('app_token');
             location.reload();
         }
     }
+
+    function handleLogout() { if(confirm('確定要登出嗎？')) { localStorage.clear(); location.reload(); } }
 
     if (currentUser && GITHUB_TOKEN) {
         document.getElementById('view-login').style.display = 'none';
@@ -183,67 +134,33 @@
     }
 
     async function syncFromCloud() {
-        const listContainer = document.getElementById('trip-list');
-        listContainer.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">正在從雲端同步行程...</p>';
         try {
             const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips.json?t=${Date.now()}`, {
                 headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
             });
-            if (!resp.ok) throw new Error('同步失敗，請檢查 Token 權限');
             const file = await resp.json();
-            const content = decodeURIComponent(escape(atob(file.content)));
-            myTrips = JSON.parse(content);
+            myTrips = JSON.parse(decodeURIComponent(escape(atob(file.content))));
             renderTripList();
-        } catch (e) {
-            alert(e.message);
-            handleLogout();
-        }
+        } catch (e) { alert('同步失敗，請檢查 Token'); handleLogout(); }
     }
 
     async function syncToCloud() {
-        try {
-            const getFileResp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips.json`, {
-                headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
-            });
-            const file = await getFileResp.json();
-            const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(myTrips, null, 2))));
-            await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips.json`, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `Update by ${currentUser}`, content: newContent, sha: file.sha })
-            });
-        } catch (e) { alert('上傳失敗：' + e.message); }
-    }
-
-    function renderTripList() {
-        const listContainer = document.getElementById('trip-list');
-        listContainer.innerHTML = '';
-        myTrips.forEach(trip => {
-            const card = document.createElement('div');
-            card.className = 'trip-card';
-            card.onclick = () => showTrip(trip.id);
-            card.innerHTML = `<div class="trip-icon">${trip.icon}</div><div class="trip-info"><div class="trip-title">${trip.title}</div><span class="trip-status">${trip.status}</span></div><div>❯</div>`;
-            listContainer.appendChild(card);
+        const getFile = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
+        const file = await getFile.json();
+        await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips.json`, {
+            method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}` },
+            body: JSON.stringify({ message: 'Update', content: btoa(unescape(encodeURIComponent(JSON.stringify(myTrips, null, 2)))), sha: file.sha })
         });
     }
 
-    function openModal() { document.getElementById('add-modal').classList.add('active'); }
-    function closeModal() { document.getElementById('add-modal').classList.remove('active'); }
-
-    function addNewTrip() {
-        const title = document.getElementById('new-trip-title').value;
-        const icon = document.getElementById('new-trip-icon').value;
-        if (!title) return alert('請輸入行程名稱');
-        const newTrip = { id: 'trip-' + Date.now(), title, icon, status: '規劃中', itinerary: '第一日\n在此輸入行程...' };
-        myTrips.push(newTrip);
-        renderTripList(); closeModal(); showTrip(newTrip.id);
-        syncToCloud();
+    function renderTripList() {
+        const list = document.getElementById('trip-list');
+        list.innerHTML = myTrips.map(t => `<div class="trip-card" onclick="showTrip('${t.id}')"><div class="trip-icon">${t.icon}</div><div class="trip-info"><div class="trip-title">${t.title}</div><span style="font-size:0.8em;color:#999">${t.status}</span></div><div>❯</div></div>`).join('');
     }
 
     function showTrip(tripId) {
         currentTripId = tripId;
         const trip = myTrips.find(t => t.id === tripId);
-        if (!trip) return;
         document.getElementById('view-home').classList.remove('active');
         document.getElementById('view-detail').classList.add('active');
         document.getElementById('app-nav').classList.add('active');
@@ -251,61 +168,94 @@
         document.getElementById('header-title').innerText = trip.title;
         displayItinerary(trip.itinerary);
         if(tripId === 'osaka-2026') loadOsakaData();
-        else {
-            document.getElementById('flight-container').innerHTML = '<p style="color:#999">暫無航班資料</p>';
-            if(chartInstance) chartInstance.destroy();
-        }
-    }
-
-    function showHome() {
-        document.getElementById('view-home').classList.add('active');
-        document.getElementById('view-detail').classList.remove('active');
-        document.getElementById('app-nav').classList.remove('active');
-        document.getElementById('btn-back').style.display = 'none';
-        document.getElementById('header-title').innerText = '我的旅行';
-    }
-
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + tabId).classList.add('active');
-        document.getElementById('nav-' + tabId).classList.add('active');
     }
 
     function displayItinerary(content) {
         const display = document.getElementById('itinerary-display');
-        display.innerHTML = content.split('\n').map(line => line.match(/日|Day/) ? `<div class="day"><div class="day-date">${line}</div>` : `<div>${line}</div>`).join('') || '尚無內容';
+        const lines = content.split('\n');
+        let html = '';
+        let totalBudget = 0;
+        let dayBudget = 0;
+        let dayBlocks = [];
+
+        lines.forEach(line => {
+            if (!line.trim()) return;
+            
+            // 提取金額 [數字]
+            const moneyMatch = line.match(/\[(\d+)\]/);
+            const amount = moneyMatch ? parseInt(moneyMatch[1]) : 0;
+            totalBudget += amount;
+
+            if (line.match(/日|Day/)) {
+                if (dayBlocks.length > 0) {
+                    // 更新前一天的預算小計
+                    let lastBlock = dayBlocks[dayBlocks.length - 1];
+                    lastBlock.html = lastBlock.html.replace('{{DAY_BUDGET}}', dayBudget > 0 ? ` (預算: ${dayBudget.toLocaleString()})` : '');
+                }
+                dayBudget = amount;
+                dayBlocks.push({
+                    title: line,
+                    html: `<div class="day-block"><div class="day-label">${line}<span style="font-size:0.8em; font-weight:normal; color:#ff9800;">{{DAY_BUDGET}}</span></div>`,
+                    items: []
+                });
+            } else {
+                dayBudget += amount;
+                const cleanLine = line.replace(/\[\d+\]/, '').replace(/^[-\*\s🛫🏨🍜🛍️🛬]+/, '').trim();
+                const itemHtml = `<div class="item-card">
+                    <span class="item-text">${line}</span>
+                    <button class="map-btn" onclick="openMap('${cleanLine}')">📍 地圖</button>
+                </div>`;
+                if (dayBlocks.length > 0) {
+                    dayBlocks[dayBlocks.length - 1].html += itemHtml;
+                } else {
+                    // 如果第一行不是日期，直接加進去
+                    html += itemHtml;
+                }
+            }
+        });
+
+        // 處理最後一天的小計
+        if (dayBlocks.length > 0) {
+            let lastBlock = dayBlocks[dayBlocks.length - 1];
+            lastBlock.html = lastBlock.html.replace('{{DAY_BUDGET}}', dayBudget > 0 ? ` (預算: ${dayBudget.toLocaleString()})` : '');
+            dayBlocks.forEach(block => html += block.html + '</div>');
+        }
+
+        display.innerHTML = html || '<p style="color:#999; text-align:center;">尚無行程</p>';
         document.getElementById('itinerary-input').value = content;
+        document.getElementById('total-budget-tag').innerText = `總預算: ${totalBudget.toLocaleString()}`;
+    }
+
+    function openMap(query) {
+        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank');
     }
 
     function toggleEditItinerary() {
-        const display = document.getElementById('itinerary-display'), edit = document.getElementById('itinerary-edit'), btn = document.getElementById('edit-btn');
-        const isEdit = edit.style.display === 'none';
-        edit.style.display = isEdit ? 'block' : 'none';
-        display.style.display = isEdit ? 'none' : 'block';
-        btn.innerText = isEdit ? '取消' : '編輯';
+        const d = document.getElementById('itinerary-display'), e = document.getElementById('itinerary-edit'), b = document.getElementById('edit-btn');
+        const isE = e.style.display === 'none';
+        e.style.display = isE ? 'block' : 'none'; d.style.display = isE ? 'none' : 'block';
+        b.innerText = isE ? '取消' : '編輯';
     }
 
     function saveItinerary() {
-        const content = document.getElementById('itinerary-input').value;
         const idx = myTrips.findIndex(t => t.id === currentTripId);
-        if (idx > -1) {
-            myTrips[idx].itinerary = content;
-            displayItinerary(content); toggleEditItinerary();
-            syncToCloud();
-        }
+        myTrips[idx].itinerary = document.getElementById('itinerary-input').value;
+        displayItinerary(myTrips[idx].itinerary); toggleEditItinerary(); syncToCloud();
+    }
+
+    function showHome() { location.reload(); }
+    function switchTab(id) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + id).classList.add('active');
+        document.getElementById('nav-' + id).classList.add('active');
     }
 
     async function loadOsakaData() {
-        try {
-            const response = await fetch('data.json?t=' + new Date().getTime());
-            const data = await response.json();
-            const latest = data[data.length - 1];
-            document.getElementById('flight-container').innerHTML = `<div class="flight-row"><div><strong>香港 ➔ 大阪</strong><br><small>UO686 | 7/18 08:45</small></div><div class="price">HK$ ${latest.uo686}</div></div><div class="flight-row"><div><strong>大阪 ➔ 香港</strong><br><small>UO899 | 7/26 17:00</small></div><div class="price">HK$ ${latest.uo899}</div></div>`;
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            if(chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, { type: 'line', data: { labels: data.map(d => d.date.split(' ')[0]), datasets: [{ label: '票價', data: data.map(d => d.total), borderColor: '#5d2d91', fill: true }] }, options: { responsive: true, maintainAspectRatio: false } });
-        } catch (e) { console.error(e); }
+        const resp = await fetch('data.json');
+        const data = await resp.json();
+        const latest = data[data.length - 1];
+        document.getElementById('flight-container').innerHTML = `<div style="display:flex;justify-content:space-between"><div>HKG➔KIX<br><small>UO686</small></div><div style="color:var(--secondary);font-weight:bold">HK$ ${latest.uo686}</div></div>`;
     }
 </script>
 </body>
