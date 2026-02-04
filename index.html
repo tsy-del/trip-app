@@ -18,7 +18,7 @@
         /* Login View */
         #view-login { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); color: white; justify-content: center; align-items: center; z-index: 5000; flex-direction: column; text-align: center; }
         #view-login input { padding: 15px; border-radius: 12px; border: none; width: 80%; max-width: 300px; margin: 10px 0; font-size: 1.1em; text-align: center; }
-        #view-login button { background: var(--secondary); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1em; }
+        #view-login button { background: var(--secondary); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1em; margin-top: 10px; }
 
         header { background: var(--primary); color: white; padding: 20px 15px; text-align: center; position: sticky; top: 0; z-index: 100; }
         header h1 { margin: 0; font-size: 1.2em; }
@@ -27,8 +27,8 @@
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         
         /* Trip List View */
-        #view-home.active { display: block; }
         #view-home { display: none; }
+        #view-home.active { display: block; }
         .trip-card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .trip-card:active { transform: scale(0.98); }
         .trip-icon { font-size: 2em; margin-right: 15px; }
@@ -77,8 +77,9 @@
     <div style="font-size: 4em; margin-bottom: 20px;">✈️</div>
     <h2 style="margin-bottom: 30px;">旅行隨身 App</h2>
     <input type="text" id="user-name" placeholder="你的名字">
-    <input type="password" id="access-key" placeholder="輸入密鑰">
-    <button onclick="handleLogin()">登入</button>
+    <input type="password" id="access-key" placeholder="輸入 Token">
+    <p style="font-size: 0.7em; color: rgba(255,255,255,0.7); width: 80%; margin-top: -5px;">* 請輸入 GitHub Token 以開啟雲端同步</p>
+    <button onclick="handleLogin()">登入並同步</button>
 </div>
 
 <header>
@@ -88,13 +89,11 @@
 </header>
 
 <div class="container">
-    <!-- View: Home -->
     <div id="view-home">
         <div id="trip-list"></div>
         <button class="add-btn" onclick="openModal()">➕ 新增旅行行程</button>
     </div>
 
-    <!-- Modal for New Trip -->
     <div id="add-modal" class="modal">
         <div class="modal-content">
             <h3>🌍 開展新旅程</h3>
@@ -107,7 +106,6 @@
         </div>
     </div>
 
-    <!-- View: Trip Detail -->
     <div id="view-detail">
         <div id="tab-overview" class="tab-content active">
             <div class="card">
@@ -145,35 +143,60 @@
 </nav>
 
 <script>
-    const SECRET_KEY = 'szy2026'; // 預設密鑰
-    const GITHUB_TOKEN = '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'; // 用於雲端同步
     const DATA_REPO = 'tsy-del/japan-trip-2026';
-    
+    let GITHUB_TOKEN = localStorage.getItem('app_token');
     let currentUser = localStorage.getItem('app_user');
     let chartInstance = null;
     let currentTripId = null;
     let myTrips = [];
 
+    function handleLogin() {
+        const name = document.getElementById('user-name').value;
+        const token = document.getElementById('access-key').value;
+        if (name && token) {
+            localStorage.setItem('app_user', name);
+            localStorage.setItem('app_token', token);
+            currentUser = name;
+            GITHUB_TOKEN = token;
+            document.getElementById('view-login').style.display = 'none';
+            document.getElementById('view-home').classList.add('active');
+            document.getElementById('display-user').innerText = name + ' ⇥';
+            syncFromCloud();
+        } else {
+            alert('請輸入名字和 Token！');
+        }
+    }
+
+    function handleLogout() {
+        if(confirm('確定要登出嗎？')) {
+            localStorage.removeItem('app_user');
+            localStorage.removeItem('app_token');
+            location.reload();
+        }
+    }
+
+    if (currentUser && GITHUB_TOKEN) {
+        document.getElementById('view-login').style.display = 'none';
+        document.getElementById('view-home').classList.add('active');
+        document.getElementById('display-user').innerText = currentUser + ' ⇥';
+        syncFromCloud();
+    }
+
     async function syncFromCloud() {
-        const statusEl = document.getElementById('trip-list');
+        const listContainer = document.getElementById('trip-list');
+        listContainer.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">正在從雲端同步行程...</p>';
         try {
             const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips.json?t=${Date.now()}`, {
-                headers: { 
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
             });
-            if (!resp.ok) throw new Error('Network response was not ok');
+            if (!resp.ok) throw new Error('同步失敗，請檢查 Token 權限');
             const file = await resp.json();
             const content = decodeURIComponent(escape(atob(file.content)));
             myTrips = JSON.parse(content);
-            localStorage.setItem('my_trips', JSON.stringify(myTrips));
             renderTripList();
         } catch (e) {
-            console.error('Cloud sync failed', e);
-            statusEl.innerHTML = `<p style="text-align:center;color:red;padding:20px;">同步失敗: ${e.message}<br><button onclick="syncFromCloud()" style="margin-top:10px;padding:5px 10px;">重試</button></p>`;
-            myTrips = JSON.parse(localStorage.getItem('my_trips')) || [];
-            if(myTrips.length > 0) renderTripList();
+            alert(e.message);
+            handleLogout();
         }
     }
 
@@ -184,58 +207,17 @@
             });
             const file = await getFileResp.json();
             const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(myTrips, null, 2))));
-            
             await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips.json`, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: `Update trips by ${currentUser}`,
-                    content: newContent,
-                    sha: file.sha
-                })
+                body: JSON.stringify({ message: `Update by ${currentUser}`, content: newContent, sha: file.sha })
             });
-            console.log('Cloud sync success');
-        } catch (e) {
-            console.error('Cloud upload failed', e);
-        }
-    }
-
-    function handleLogin() {
-        const name = document.getElementById('user-name').value;
-        const key = document.getElementById('access-key').value;
-        if (key === SECRET_KEY && name) {
-            localStorage.setItem('app_user', name);
-            currentUser = name;
-            document.getElementById('view-login').style.display = 'none';
-            document.getElementById('view-home').classList.add('active');
-            document.getElementById('display-user').innerText = name + ' ⇥';
-            syncFromCloud();
-        } else {
-            alert('密鑰錯誤或名字未填！');
-        }
-    }
-
-    function handleLogout() {
-        if(confirm('確定要登出嗎？')) {
-            localStorage.removeItem('app_user');
-            location.reload();
-        }
-    }
-
-    if (currentUser) {
-        document.getElementById('view-login').style.display = 'none';
-        document.getElementById('view-home').classList.add('active');
-        document.getElementById('display-user').innerText = currentUser + ' ⇥';
-        syncFromCloud();
+        } catch (e) { alert('上傳失敗：' + e.message); }
     }
 
     function renderTripList() {
         const listContainer = document.getElementById('trip-list');
         listContainer.innerHTML = '';
-        if (myTrips.length === 0) {
-            listContainer.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">正在從雲端同步行程...</p>';
-            return;
-        }
         myTrips.forEach(trip => {
             const card = document.createElement('div');
             card.className = 'trip-card';
@@ -254,8 +236,8 @@
         if (!title) return alert('請輸入行程名稱');
         const newTrip = { id: 'trip-' + Date.now(), title, icon, status: '規劃中', itinerary: '第一日\n在此輸入行程...' };
         myTrips.push(newTrip);
-        localStorage.setItem('my_trips', JSON.stringify(myTrips));
         renderTripList(); closeModal(); showTrip(newTrip.id);
+        syncToCloud();
     }
 
     function showTrip(tripId) {
@@ -269,7 +251,10 @@
         document.getElementById('header-title').innerText = trip.title;
         displayItinerary(trip.itinerary);
         if(tripId === 'osaka-2026') loadOsakaData();
-        else document.getElementById('flight-container').innerHTML = '<p style="color:#999">暫無航班資料</p>';
+        else {
+            document.getElementById('flight-container').innerHTML = '<p style="color:#999">暫無航班資料</p>';
+            if(chartInstance) chartInstance.destroy();
+        }
     }
 
     function showHome() {
@@ -306,9 +291,7 @@
         const idx = myTrips.findIndex(t => t.id === currentTripId);
         if (idx > -1) {
             myTrips[idx].itinerary = content;
-            localStorage.setItem('my_trips', JSON.stringify(myTrips));
-            displayItinerary(content); 
-            toggleEditItinerary();
+            displayItinerary(content); toggleEditItinerary();
             syncToCloud();
         }
     }
