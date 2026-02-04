@@ -120,8 +120,14 @@
     <div id="view-detail">
         <!-- Overview Tab -->
         <div id="tab-overview" class="tab-content active">
-            <div class="card"><h3>✈️ 航班追蹤</h3><div id="flight-container">載入中...</div></div>
-            <div class="card"><h3>📈 票價走勢</h3><div style="height:200px"><canvas id="priceChart"></canvas></div></div>
+            <div class="card">
+                <h3>📈 票價走勢 (大阪行程)</h3>
+                <div style="height:250px"><canvas id="priceChart"></canvas></div>
+            </div>
+            <div class="card">
+                <h3>📝 行程摘要</h3>
+                <p id="trip-summary">正在生成摘要...</p>
+            </div>
         </div>
 
         <!-- Itinerary Tab -->
@@ -287,9 +293,14 @@
         document.getElementById('app-nav').classList.add('active');
         document.getElementById('btn-back').style.display = 'block';
         document.getElementById('header-title').innerText = trip.title;
+        
+        // 更新摘要
+        document.getElementById('trip-summary').innerText = `這是一個由 ${trip.startDate} 到 ${trip.endDate} 的旅程。`;
+        
         renderDayTabs();
         renderItinerary();
         if(tripId === 'osaka-2026') loadOsakaData();
+        else document.getElementById('tab-overview').innerHTML = `<div class="card"><h3>📊 行程數據</h3><p style="color:#999">目前僅「大阪行程」提供自動機價追蹤數據。</p></div><div class="card"><h3>📝 行程摘要</h3><p>這是一個由 ${trip.startDate} 到 ${trip.endDate} 的旅程。</p></div>`;
     }
 
     function renderDayTabs() {
