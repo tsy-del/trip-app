@@ -144,7 +144,7 @@
 
 <script>
     const DATA_REPO = 'tsy-del/japan-trip-2026';
-    let GITHUB_TOKEN = localStorage.getItem('app_token');
+    let GITHUB_TOKEN = localStorage.getItem('app_token') || '';
     let currentUser = localStorage.getItem('app_user');
     let chartInstance = null;
     let currentTripId = null;
