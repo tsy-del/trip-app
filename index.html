@@ -84,7 +84,7 @@
 <header>
     <button id="btn-back" class="back-btn" onclick="showHome()" style="display:none;">❮</button>
     <h1 id="header-title">我的旅行</h1>
-    <span id="display-user" class="user-tag">未登入</span>
+    <span id="display-user" class="user-tag" onclick="handleLogout()" style="cursor:pointer;">未登入</span>
 </header>
 
 <div class="container">
@@ -161,10 +161,17 @@
             currentUser = name;
             document.getElementById('view-login').style.display = 'none';
             document.getElementById('view-home').classList.add('active');
-            document.getElementById('display-user').innerText = name;
+            document.getElementById('display-user').innerText = name + ' ⇥';
             renderTripList();
         } else {
             alert('密鑰錯誤或名字未填！');
+        }
+    }
+
+    function handleLogout() {
+        if(confirm('確定要登出嗎？')) {
+            localStorage.removeItem('app_user');
+            location.reload();
         }
     }
 
@@ -172,7 +179,7 @@
     if (currentUser) {
         document.getElementById('view-login').style.display = 'none';
         document.getElementById('view-home').classList.add('active');
-        document.getElementById('display-user').innerText = currentUser;
+        document.getElementById('display-user').innerText = currentUser + ' ⇥';
         renderTripList();
     }
 
