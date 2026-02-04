@@ -106,16 +106,30 @@
 </div></div>
 
 <div id="item-modal" class="modal"><div class="modal-content">
-    <h3>新增活動</h3>
-    <div class="form-row" style="display:flex; gap:10px;">
-        <div style="flex:1;"><label>開始時間</label><input type="time" id="item-time" value="09:00"></div>
-        <div style="flex:1;"><label>結束時間</label><input type="time" id="item-time-end" value="10:00"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h3 id="item-modal-title" style="margin:0; font-size:1.1em;">新增活動</h3>
+        <button onclick="toggleFlightMode()" id="flight-mode-btn" style="background:#f0f0f0; border:1px solid #ddd; padding:4px 10px; border-radius:15px; font-size:0.8em;">✈️ 航班模式</button>
     </div>
-    <div class="form-row"><label>活動名稱</label><input type="text" id="item-name"></div>
-    <div class="form-row"><label>副標題 (日/英)</label><input type="text" id="item-sub"></div>
-    <div class="form-row"><label>地點/地址</label><input type="text" id="item-location"></div>
-    <div class="form-row"><label>備註</label><textarea id="item-remark" rows="2"></textarea></div>
-    <div class="modal-footer"><button style="background:#eee;" onclick="closeItemModal()">取消</button><button style="background:var(--primary);color:white;" onclick="saveItem()">儲存</button></div>
+    <div id="normal-fields">
+        <div class="form-row" style="display:flex; gap:10px;">
+            <div style="flex:1;"><label>開始時間</label><input type="time" id="item-time" value="09:00"></div>
+            <div style="flex:1;"><label>結束時間</label><input type="time" id="item-time-end" value="10:00"></div>
+        </div>
+        <div class="form-row"><label>活動名稱</label><input type="text" id="item-name" placeholder="例如：心齋橋逛街"></div>
+        <div class="form-row"><label>副標題 (日/英)</label><input type="text" id="item-sub" placeholder="例如：Shinsaibashi"></div>
+        <div class="form-row"><label>地點/地址</label><input type="text" id="item-location" placeholder="點擊地圖按鈕會搜尋此處"></div>
+        <div class="form-row"><label>備註</label><textarea id="item-remark" rows="2"></textarea></div>
+    </div>
+    <div id="flight-fields" style="display:none;">
+        <div class="form-row"><label>起飛時間</label><input type="time" id="flight-time" value="09:00"></div>
+        <div class="form-row"><label>航空公司</label><input type="text" id="flight-airline" placeholder="例如：國泰航空"></div>
+        <div class="form-row"><label>航班編號</label><input type="text" id="flight-no" placeholder="例如：CX506"></div>
+        <div class="form-row"><label>飛行時間 (預計)</label><input type="text" id="flight-duration" placeholder="例如：4h 15m"></div>
+    </div>
+    <div class="modal-footer">
+        <button style="background:#eee;" onclick="closeItemModal()">取消</button>
+        <button style="background:var(--primary);color:white;" onclick="saveItem()">儲存</button>
+    </div>
 </div></div>
 
 <script>
@@ -245,9 +259,52 @@
     
     function openItemModal() { document.getElementById('item-modal').classList.add('active'); }
     function closeItemModal() { document.getElementById('item-modal').classList.remove('active'); }
+    let isFlightMode = false;
+    function toggleFlightMode() {
+        isFlightMode = !isFlightMode;
+        document.getElementById('normal-fields').style.display = isFlightMode ? 'none' : 'block';
+        document.getElementById('flight-fields').style.display = isFlightMode ? 'block' : 'none';
+        document.getElementById('flight-mode-btn').innerText = isFlightMode ? '📝 普通模式' : '✈️ 航班模式';
+        document.getElementById('item-modal-title').innerText = isFlightMode ? '添加航班' : '新增活動';
+    }
+
     function saveItem() {
         const trip = myTrips.find(x=>x.id===currentTripId); if(!trip.items) trip.items = [];
-        trip.items.push({ id:Date.now(), day:currentDay, time:document.getElementById('item-time').value, endTime:document.getElementById('item-time-end').value, name:document.getElementById('item-name').value, subtitle:document.getElementById('item-sub').value, location:document.getElementById('item-location').value, remark:document.getElementById('item-remark').value });
+        
+        if (isFlightMode) {
+            const fTime = document.getElementById('flight-time').value;
+            const airline = document.getElementById('flight-airline').value;
+            const fNo = document.getElementById('flight-no').value;
+            const duration = document.getElementById('flight-duration').value;
+            
+            let [h, m] = fTime.split(':').map(Number);
+            let checkInH = (h - 2 + 24) % 24;
+            const checkInTime = `${String(checkInH).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+
+            trip.items.push({
+                id: Date.now(), day: currentDay, time: checkInTime, endTime: fTime,
+                name: "🚀 抵達機場辦理登機 & 報到",
+                subtitle: "建議提前2小時到達預留時間", location: "", remark: ""
+            });
+
+            trip.items.push({
+                id: Date.now() + 1, day: currentDay, time: fTime, endTime: "",
+                name: `✈️ ${airline} ${fNo}`,
+                subtitle: `預計飛行時間: ${duration}`, location: "", remark: ""
+            });
+            
+            if (isFlightMode) toggleFlightMode();
+        } else {
+            trip.items.push({ 
+                id: Date.now(), day: currentDay, 
+                time: document.getElementById('item-time').value, 
+                endTime: document.getElementById('item-time-end').value, 
+                name: document.getElementById('item-name').value, 
+                subtitle: document.getElementById('item-sub').value,
+                location: document.getElementById('item-location').value, 
+                remark: document.getElementById('item-remark').value 
+            });
+        }
         syncToCloud(); renderItinerary(); closeItemModal();
         document.getElementById('item-name').value = ''; document.getElementById('item-sub').value = ''; document.getElementById('item-location').value = '';
     }
