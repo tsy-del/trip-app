@@ -100,10 +100,7 @@
         <div id="tab-overview" class="tab-content active">
             <div class="card">
                 <h2>✈️ 航班追蹤</h2>
-                <div id="flight-container">
-                    <!-- Loaded dynamically -->
-                    載入中...
-                </div>
+                <div id="flight-container">載入中...</div>
             </div>
             <div class="card">
                 <h2>📈 票價走勢</h2>
@@ -112,9 +109,16 @@
         </div>
         <div id="tab-itinerary" class="tab-content">
             <div class="card">
-                <h2>🗺️ 行程規劃</h2>
-                <div class="timeline" id="itinerary-list">
-                    <!-- Loaded dynamically -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 15px;">
+                    <h2 style="margin:0; border:none;">🗺️ 行程規劃</h2>
+                    <button id="edit-btn" onclick="toggleEditItinerary()" style="background: var(--primary); color: white; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8em;">編輯</button>
+                </div>
+                <div id="itinerary-display" class="timeline">
+                    <!-- 顯示模式 -->
+                </div>
+                <div id="itinerary-edit" style="display: none;">
+                    <textarea id="itinerary-input" style="width: 100%; height: 300px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; font-size: 0.9em; box-sizing: border-box;"></textarea>
+                    <button onclick="saveItinerary()" style="width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; margin-top: 10px; font-weight: bold;">儲存行程</button>
                 </div>
             </div>
         </div>
@@ -132,8 +136,15 @@
 
 <script>
     let chartInstance = null;
+    let currentTripId = null;
     let myTrips = JSON.parse(localStorage.getItem('my_trips')) || [
-        { id: 'osaka-2026', title: '2026 大阪夏季之旅', icon: '🇯🇵', status: '進行中' }
+        { 
+            id: 'osaka-2026', 
+            title: '2026 大阪夏季之旅', 
+            icon: '🇯🇵', 
+            status: '進行中',
+            itinerary: '7月18日\n🛫 出發 & 飯店入住\n\n7月26日\n🛍️ 最後衝刺 & 返港'
+        }
     ];
 
     function renderTripList() {
@@ -164,7 +175,13 @@
         if (!title) return alert('請輸入行程名稱');
 
         const newId = 'trip-' + Date.now();
-        const newTrip = { id: newId, title: title, icon: icon, status: '規劃中' };
+        const newTrip = { 
+            id: newId, 
+            title: title, 
+            icon: icon, 
+            status: '規劃中',
+            itinerary: '第一日\n在此輸入行程...'
+        };
         
         myTrips.push(newTrip);
         localStorage.setItem('my_trips', JSON.stringify(myTrips));
@@ -172,12 +189,11 @@
         renderTripList();
         closeModal();
         showTrip(newId);
-        
-        // Reset inputs
         document.getElementById('new-trip-title').value = '';
     }
 
     function showTrip(tripId) {
+        currentTripId = tripId;
         const trip = myTrips.find(t => t.id === tripId);
         if (!trip) return;
 
@@ -187,13 +203,59 @@
         document.getElementById('btn-back').style.display = 'block';
         document.getElementById('header-title').innerText = trip.title;
         
+        // 渲染行程內容
+        displayItinerary(trip.itinerary);
+        
         if(tripId === 'osaka-2026') {
             loadOsakaData();
         } else {
-            // Placeholder for new trips
-            document.getElementById('flight-container').innerHTML = '暫無航班資料';
-            document.getElementById('itinerary-list').innerHTML = '快來規劃你的第一站吧！';
+            document.getElementById('flight-container').innerHTML = '<p style="color:#999">暫無航班資料</p>';
             if(chartInstance) chartInstance.destroy();
+        }
+    }
+
+    function displayItinerary(content) {
+        const display = document.getElementById('itinerary-display');
+        const lines = content.split('\n');
+        let html = '';
+        lines.forEach(line => {
+            if (line.trim().length === 0) return;
+            // 簡單判斷：如果包含日期字眼就加粗
+            if (line.match(/日|Day/)) {
+                html += `<div class="day"><div class="day-date">${line}</div>`;
+            } else {
+                html += `<div>${line}</div>`;
+            }
+            if (line.match(/日|Day/)) { /* keep open */ } else { html += `</div>`; }
+        });
+        display.innerHTML = html || '尚無行程內容';
+        document.getElementById('itinerary-input').value = content;
+    }
+
+    function toggleEditItinerary() {
+        const display = document.getElementById('itinerary-display');
+        const edit = document.getElementById('itinerary-edit');
+        const btn = document.getElementById('edit-btn');
+        
+        if (edit.style.display === 'none') {
+            edit.style.display = 'block';
+            display.style.display = 'none';
+            btn.innerText = '取消';
+        } else {
+            edit.style.display = 'none';
+            display.style.display = 'block';
+            btn.innerText = '編輯';
+        }
+    }
+
+    function saveItinerary() {
+        const content = document.getElementById('itinerary-input').value;
+        const tripIndex = myTrips.findIndex(t => t.id === currentTripId);
+        if (tripIndex > -1) {
+            myTrips[tripIndex].itinerary = content;
+            localStorage.setItem('my_trips', JSON.stringify(myTrips));
+            displayItinerary(content);
+            toggleEditItinerary();
         }
     }
 
