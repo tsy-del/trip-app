@@ -15,6 +15,7 @@
         .price-tag { font-size: 1.5em; font-weight: bold; color: #e91e63; }
         .chart-container { position: relative; height: 300px; width: 100%; }
         .tag { background: #5d2d91; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; }
+        .loading { text-align: center; color: #888; padding: 20px; }
     </style>
 </head>
 <body>
@@ -28,16 +29,16 @@
                     <strong>HKG ➔ KIX</strong> (18 Jul)<br>
                     <span class="tag">UO686</span> 08:45 - 13:30
                 </div>
-                <div class="price-tag" id="dep-price">HK$ 1,060</div>
+                <div class="price-tag" id="dep-price">--</div>
             </div>
             <div class="flight-info">
                 <div>
                     <strong>KIX ➔ HKG</strong> (26 Jul)<br>
                     <span class="tag">UO899</span> 17:00 - 20:10
                 </div>
-                <div class="price-tag" id="ret-price">HK$ 1,240</div>
+                <div class="price-tag" id="ret-price">--</div>
             </div>
-            <p style="text-align: right; color: #888; font-size: 0.8em;">Total (Inc. Tax): HK$ 3,179</p>
+            <p style="text-align: right; color: #888; font-size: 0.8em;">Latest Total: <span id="total-price">--</span></p>
         </div>
 
         <div class="card">
@@ -49,34 +50,49 @@
 
         <div class="card">
             <h2>Itinerary Notes</h2>
-            <ul>
+            <ul id="itinerary">
                 <li>Current Focus: Price monitoring for HK Express.</li>
-                <li>Next Step: Compare with ANA/Cathay if UO prices rise.</li>
+                <li>Data updates daily at 9:00 AM & 9:00 PM.</li>
             </ul>
         </div>
     </div>
 
     <script>
-        const ctx = document.getElementById('priceChart').getContext('2d');
-        const priceChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Feb 4 (Init)'],
-                datasets: [{
-                    label: 'Total Flight Price (HKD)',
-                    data: [3179],
-                    borderColor: '#5d2d91',
-                    backgroundColor: 'rgba(93, 45, 145, 0.1)',
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { y: { beginAtZero: false } }
+        async function loadData() {
+            try {
+                const response = await fetch('data.json?t=' + new Date().getTime());
+                const data = await response.json();
+                
+                const latest = data[data.length - 1];
+                document.getElementById('dep-price').innerText = 'HK$ ' + latest.uo686.toLocaleString();
+                document.getElementById('ret-price').innerText = 'HK$ ' + latest.uo899.toLocaleString();
+                document.getElementById('total-price').innerText = 'HK$ ' + latest.total.toLocaleString();
+
+                const ctx = document.getElementById('priceChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.map(d => d.date),
+                        datasets: [{
+                            label: 'Total Price (HKD)',
+                            data: data.map(d => d.total),
+                            borderColor: '#5d2d91',
+                            backgroundColor: 'rgba(93, 45, 145, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: false } }
+                    }
+                });
+            } catch (e) {
+                console.error('Failed to load data', e);
             }
-        });
+        }
+        loadData();
     </script>
 </body>
 </html>
