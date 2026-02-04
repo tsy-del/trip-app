@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 日本夏季之旅 | SzeYuen</title>
+    <title>我的旅行隨身 App | SzeYuen</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -13,185 +13,169 @@
             --card-bg: #ffffff;
             --text: #1c1e21;
         }
-        body { font-family: -apple-system, "PingFang HK", "Helvetica Neue", sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 70px; color: var(--text); }
+        body { font-family: -apple-system, "PingFang HK", sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 70px; color: var(--text); }
         
-        /* App Header */
-        header { background: var(--primary); color: white; padding: 20px 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 1.2em; letter-spacing: 1px; }
+        header { background: var(--primary); color: white; padding: 20px 15px; text-align: center; position: sticky; top: 0; z-index: 100; }
+        header h1 { margin: 0; font-size: 1.2em; }
 
-        /* Navigation Bar */
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000; }
-        nav button { background: none; border: none; color: #888; font-size: 0.8em; display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; outline: none; }
-        nav button.active { color: var(--primary); font-weight: bold; }
-        nav button .icon { font-size: 1.5em; margin-bottom: 4px; }
-
-        /* Container & Tabs */
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        
+        /* Trip List View */
+        #view-home.active { display: block; }
+        #view-home { display: none; }
+        .trip-card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .trip-card:active { transform: scale(0.98); }
+        .trip-icon { font-size: 2em; margin-right: 15px; }
+        .trip-info { flex: 1; }
+        .trip-title { font-weight: bold; font-size: 1.1em; margin-bottom: 4px; }
+        .trip-status { font-size: 0.8em; color: var(--primary); background: #eee; padding: 2px 8px; border-radius: 10px; }
+
+        .add-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+
+        /* Trip Detail View */
+        #view-detail { display: none; }
+        #view-detail.active { display: block; }
+        
+        .back-btn { background: none; border: none; color: white; position: absolute; left: 15px; top: 20px; font-size: 1.2em; cursor: pointer; }
+
+        /* Navigation & Tabs (Inherited from previous version) */
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: none; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        nav.active { display: flex; }
+        nav button { background: none; border: none; color: #888; font-size: 0.8em; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        nav button.active { color: var(--primary); font-weight: bold; }
+
+        .card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Cards */
-        .card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .card h2 { margin-top: 0; font-size: 1em; color: var(--primary); border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 15px; }
-
-        /* Flight UI */
+        .tab-content.active { display: block; }
+        
         .flight-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .flight-main { flex: 1; }
-        .flight-code { font-size: 0.7em; background: #eee; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; }
         .price { font-weight: bold; color: var(--secondary); font-size: 1.2em; }
-        .flight-time { color: #666; font-size: 0.9em; margin-top: 3px; }
-
-        /* Timeline UI */
-        .timeline { position: relative; padding-left: 20px; }
-        .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #ddd; }
-        .day { position: relative; margin-bottom: 25px; }
-        .day::before { content: ''; position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; }
-        .day-date { font-weight: bold; font-size: 0.95em; margin-bottom: 5px; color: var(--primary); }
-        .day-details { font-size: 0.9em; background: #f9f9f9; padding: 12px; border-radius: 10px; line-height: 1.6; }
-
-        /* Chart */
-        .chart-container { height: 250px; }
+        .timeline { position: relative; padding-left: 20px; border-left: 2px solid #ddd; }
+        .day { margin-bottom: 20px; }
+        .day-date { font-weight: bold; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🇯🇵 2026 大阪夏季之旅</h1>
+    <button id="btn-back" class="back-btn" onclick="showHome()" style="display:none;">❮</button>
+    <h1 id="header-title">我的旅行</h1>
 </header>
 
 <div class="container">
-    <!-- Tab 1: Overview (概覽) -->
-    <div id="tab-overview" class="tab-content active">
-        <div class="card">
-            <h2>✈️ 航班追蹤</h2>
-            <div class="flight-row">
-                <div class="flight-main">
-                    <strong>香港 (HKG) ➔ 大阪 (KIX)</strong> <span class="flight-code">UO686</span><br>
-                    <div class="flight-time">7月18日 (六) · 08:45</div>
+    <!-- View: Home (Trip List) -->
+    <div id="view-home" class="active">
+        <div id="trip-list">
+            <!-- Trips will be loaded here -->
+             <div class="trip-card" onclick="showTrip('osaka-2026')">
+                <div class="trip-icon">🇯🇵</div>
+                <div class="trip-info">
+                    <div class="trip-title">2026 大阪夏季之旅</div>
+                    <span class="trip-status">進行中</span>
                 </div>
-                <div class="price" id="dep-price">--</div>
-            </div>
-            <div class="flight-row">
-                <div class="flight-main">
-                    <strong>大阪 (KIX) ➔ 香港 (HKG)</strong> <span class="flight-code">UO899</span><br>
-                    <div class="flight-time">7月26日 (日) · 17:00</div>
-                </div>
-                <div class="price" id="ret-price">--</div>
-            </div>
-            <div style="text-align: right; border-top: 1px solid #eee; padding-top: 10px; color: #666;">
-                <small>目前總票價：</small> <span id="total-price" style="font-weight: bold; color: var(--text);">--</span>
-            </div>
+                <div>❯</div>
+             </div>
         </div>
-
-        <div class="card">
-            <h2>📈 票價走勢</h2>
-            <div class="chart-container">
-                <canvas id="priceChart"></canvas>
-            </div>
-        </div>
+        <button class="add-btn" onclick="alert('新增行程功能開發中！')">➕ 新增旅行行程</button>
     </div>
 
-    <!-- Tab 2: Itinerary (行程) -->
-    <div id="tab-itinerary" class="tab-content">
-        <div class="card">
-            <h2>🗺️ 行程規劃</h2>
-            <div class="timeline">
-                <div class="day">
-                    <div class="day-date">第 1 日：7月18日 (六)</div>
-                    <div class="day-details">
-                        🛫 乘搭航班前往大阪<br>
-                        🏨 酒店辦理入住手續<br>
-                        🍜 道頓堀 / 心齋橋晚餐
-                    </div>
+    <!-- View: Trip Detail -->
+    <div id="view-detail">
+        <div id="tab-overview" class="tab-content active">
+            <div class="card">
+                <h2>✈️ 航班追蹤</h2>
+                <div id="flight-container">
+                    <!-- Loaded dynamically -->
+                    載入中...
                 </div>
-                <div class="day">
-                    <div class="day-date">第 2-8 日：7月19-25日</div>
-                    <div class="day-details" style="color:#999; font-style: italic;">
-                        行程規劃中...
-                    </div>
-                </div>
-                <div class="day">
-                    <div class="day-date">第 9 日：7月26日 (日)</div>
-                    <div class="day-details">
-                        🛍️ Rinku Town Outlet 最後衝刺<br>
-                        🛬 乘搭航班返回香港
-                    </div>
+            </div>
+            <div class="card">
+                <h2>📈 票價走勢</h2>
+                <div style="height:200px"><canvas id="priceChart"></canvas></div>
+            </div>
+        </div>
+        <div id="tab-itinerary" class="tab-content">
+            <div class="card">
+                <h2>🗺️ 行程規劃</h2>
+                <div class="timeline" id="itinerary-list">
+                    <!-- Loaded dynamically -->
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Tab 3: Budget (預算) -->
-    <div id="tab-budget" class="tab-content">
-        <div class="card">
-            <h2>💰 開支記錄</h2>
-            <p style="text-align: center; color: #999; padding: 20px;">即將推出...</p>
+        <div id="tab-budget" class="tab-content">
+            <div class="card"><h2>💰 開支記錄</h2><p>即將推出...</p></div>
         </div>
     </div>
 </div>
 
-<nav>
-    <button onclick="switchTab('overview')" id="nav-overview" class="active">
-        <span class="icon">📊</span>
-        <span>概覽</span>
-    </button>
-    <button onclick="switchTab('itinerary')" id="nav-itinerary">
-        <span class="icon">🗺️</span>
-        <span>行程</span>
-    </button>
-    <button onclick="switchTab('budget')" id="nav-budget">
-        <span class="icon">💰</span>
-        <span>預算</span>
-    </button>
+<nav id="app-nav">
+    <button onclick="switchTab('overview')" id="nav-overview" class="active"><span>📊</span><br>概覽</button>
+    <button onclick="switchTab('itinerary')" id="nav-itinerary"><span>🗺️</span><br>行程</button>
+    <button onclick="switchTab('budget')" id="nav-budget"><span>💰</span><br>預算</button>
 </nav>
 
 <script>
+    let chartInstance = null;
+
+    function showTrip(tripId) {
+        document.getElementById('view-home').classList.remove('active');
+        document.getElementById('view-detail').classList.add('active');
+        document.getElementById('app-nav').classList.add('active');
+        document.getElementById('btn-back').style.display = 'block';
+        
+        if(tripId === 'osaka-2026') {
+            document.getElementById('header-title').innerText = '大阪夏季之旅';
+            loadOsakaData();
+        }
+    }
+
+    function showHome() {
+        document.getElementById('view-home').classList.add('active');
+        document.getElementById('view-detail').classList.remove('active');
+        document.getElementById('app-nav').classList.remove('active');
+        document.getElementById('btn-back').style.display = 'none';
+        document.getElementById('header-title').innerText = '我的旅行';
+    }
+
     function switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        
         document.getElementById('tab-' + tabId).classList.add('active');
         document.getElementById('nav-' + tabId).classList.add('active');
-        window.scrollTo(0,0);
     }
 
-    async function loadData() {
-        try {
-            const response = await fetch('data.json?t=' + new Date().getTime());
-            const data = await response.json();
-            const latest = data[data.length - 1];
-            
-            document.getElementById('dep-price').innerText = 'HK$ ' + latest.uo686.toLocaleString();
-            document.getElementById('ret-price').innerText = 'HK$ ' + latest.uo899.toLocaleString();
-            document.getElementById('total-price').innerText = 'HK$ ' + latest.total.toLocaleString();
+    async function loadOsakaData() {
+        const response = await fetch('data.json?t=' + new Date().getTime());
+        const data = await response.json();
+        const latest = data[data.length - 1];
 
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map(d => d.date.split(' ')[0]),
-                    datasets: [{
-                        label: '總票價 (HKD)',
-                        data: data.map(d => d.total),
-                        borderColor: '#5d2d91',
-                        borderWidth: 2,
-                        pointRadius: 3,
-                        backgroundColor: 'rgba(93, 45, 145, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: false, grid: { color: '#f0f0f0' } }, x: { grid: { display: false } } }
-                }
-            });
-        } catch (e) { console.error(e); }
+        document.getElementById('flight-container').innerHTML = `
+            <div class="flight-row">
+                <div><strong>香港 ➔ 大阪</strong><br><small>UO686 | 7/18 08:45</small></div>
+                <div class="price">HK$ ${latest.uo686}</div>
+            </div>
+            <div class="flight-row">
+                <div><strong>大阪 ➔ 香港</strong><br><small>UO899 | 7/26 17:00</small></div>
+                <div class="price">HK$ ${latest.uo899}</div>
+            </div>
+        `;
+
+        document.getElementById('itinerary-list').innerHTML = `
+            <div class="day"><div class="day-date">7月18日</div><div>🛫 出發 & 飯店入社</div></div>
+            <div class="day"><div class="day-date">7月26日</div><div>🛍️ 最後衝刺 & 返港</div></div>
+        `;
+
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        if(chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.date.split(' ')[0]),
+                datasets: [{ label: '票價', data: data.map(d => d.total), borderColor: '#5d2d91', fill: true }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
     }
-    loadData();
 </script>
 </body>
 </html>
