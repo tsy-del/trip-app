@@ -160,6 +160,13 @@
         "name": "Lunch ",
         "amount": 20000,
         "paidBy": "Chun"
+      },
+      {
+        "id": 1770263314938,
+        "day": 1,
+        "name": "Mtr",
+        "amount": 5000,
+        "paidBy": "Joann"
       }
     ]
   }
