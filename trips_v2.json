@@ -6,15 +6,6 @@
     "status": "進行中",
     "items": [
       {
-        "id": 1770188243490,
-        "day": 1,
-        "time": "09:00",
-        "name": "testing",
-        "location": "testing",
-        "remark": "",
-        "budget": 0
-      },
-      {
         "id": 1770188259448,
         "day": 1,
         "time": "13:00",
