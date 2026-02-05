@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #e91e63; --secondary: #5d2d91; --bg: #f8f9fb; --card-bg: #ffffff; --text: #333; }
-        body { font-family: -apple-system, "PingFang HK", sans-serif; background-color: var(--bg); margin: 0; color: var(--text); padding-bottom: 20px; overflow-x: hidden; }
+        body { font-family: -apple-system, "PingFang HK", sans-serif; background-color: var(--bg); margin: 0; color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
         
         #view-login { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--secondary); color: white; justify-content: center; align-items: center; z-index: 5000; flex-direction: column; }
         #view-login input { padding: 15px; border-radius: 12px; border: none; width: 80%; max-width: 300px; margin: 10px 0; text-align: center; font-size: 1.1em; }
@@ -17,12 +17,11 @@
         header { background: white; color: #333; padding: 10px 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; height: 55px; box-sizing: border-box; }
         header h1 { margin: 0; font-size: 1.05em; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
         .back-btn { font-size: 1.2em; cursor: pointer; width: 30px; text-align: left; }
-        
         .header-right { display: flex; align-items: center; gap: 6px; }
-        .user-tag { font-size: 0.7em; background: #eee; padding: 3px 8px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
-        #data-btn { display: none; font-size: 0.7em; background: var(--secondary); color: white; border: none; padding: 4px 8px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
-        #delete-trip-btn { display: none; background: none; border: none; color: #ff5252; font-size: 1.1em; cursor: pointer; padding: 0 5px; }
-        #mates-btn { display: none; font-size: 0.7em; background: rgba(233, 30, 99, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 3px 8px; border-radius: 12px; cursor: pointer; white-space: nowrap; font-weight: bold; }
+        .user-tag { font-size: 0.7em; background: #eee; padding: 3px 8px; border-radius: 10px; cursor: pointer; }
+        #data-btn { display: none; font-size: 0.7em; background: var(--secondary); color: white; border: none; padding: 4px 8px; border-radius: 12px; cursor: pointer; }
+        #delete-trip-btn { display: none; background: none; border: none; color: #ff5252; font-size: 1.1em; cursor: pointer; }
+        #mates-btn { display: none; font-size: 0.7em; background: rgba(233, 30, 99, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 3px 8px; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
         .container { max-width: 600px; margin: 0 auto; }
         #view-home { display: none; padding: 15px; }
@@ -32,45 +31,40 @@
         #view-detail { display: none; }
         #view-detail.active { display: block; }
 
-        #map-container { width: 100%; height: 250px; background: #eee; position: relative; }
-        #map { width: 100%; height: 100%; }
+        #map-container { width: 100%; height: 200px; background: #eee; }
+        .day-tabs { display: flex; overflow-x: auto; background: white; padding: 10px 15px; border-bottom: 1px solid #eee; position: sticky; top: 55px; z-index: 90; }
+        .day-tab { flex-shrink: 0; padding: 8px 15px; text-align: center; color: #999; border-radius: 8px; }
+        .day-tab.active { color: var(--primary); background: rgba(233, 30, 99, 0.05); font-weight: bold; position: relative; }
+        .day-tab.active::after { content: ''; width: 20px; height: 3px; background: var(--primary); position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-radius: 2px; }
 
-        .hotel-bar { background: #e3f2fd; border-radius: 12px; padding: 12px 15px; margin: 15px; display: flex; align-items: center; gap: 12px; border: 1px dashed #2196f3; cursor: pointer; }
-        .hotel-icon { font-size: 1.4em; }
-        .hotel-info { flex: 1; overflow: hidden; }
-        .hotel-title { font-weight: bold; font-size: 0.9em; color: #1976d2; }
-        .hotel-addr { font-size: 0.75em; color: #64b5f6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .hotel-bar { background: #e3f2fd; border-radius: 12px; padding: 10px 15px; margin: 15px; display: flex; align-items: center; gap: 10px; border: 1px dashed #2196f3; font-size: 0.85em; cursor: pointer; }
+        
+        #itinerary-list { padding: 0 15px; }
+        .item-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; gap: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+        .item-time-box { width: 45px; text-align: center; font-size: 0.75em; color: #999; display: flex; flex-direction: column; justify-content: center; }
+        .item-icon-circle { width: 30px; height: 30px; background: #f0f2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 4px auto; font-size: 1em; }
+        .item-main { flex: 1; }
+        .item-title { font-weight: bold; font-size: 1em; color: #222; }
+        
+        .expense-card { background: #fffcf5; border: 1px solid #ffe0b2; border-radius: 12px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .exp-info b { color: #f57c00; font-size: 0.95em; }
+        .exp-amount { font-weight: bold; color: #ef6c00; }
 
-        .day-tabs { display: flex; overflow-x: auto; white-space: nowrap; background: white; padding: 10px 15px; border-bottom: 1px solid #eee; position: sticky; top: 55px; z-index: 90; }
-        .day-tab { display: flex; flex-direction: column; align-items: center; padding: 8px 15px; margin-right: 10px; border-radius: 8px; color: #999; min-width: 60px; }
-        .day-tab .tab-date { font-size: 0.75em; margin-bottom: 4px; }
-        .day-tab .tab-name { font-size: 0.9em; font-weight: bold; }
-        .day-tab.active { color: var(--primary); background: rgba(233, 30, 99, 0.05); position: relative; }
-        .day-tab.active::after { content: ''; width: 20px; height: 3px; background: var(--primary); position: absolute; bottom: 0; border-radius: 2px; }
+        .settlement-box { background: #333; color: white; margin: 15px; padding: 15px; border-radius: 15px; font-size: 0.85em; }
+        .settlement-box h4 { margin: 0 0 10px 0; color: #ffeb3b; }
+        .settlement-list { list-style: none; padding: 0; margin: 0; }
+        .settlement-list li { display: flex; justify-content: space-between; margin-bottom: 5px; }
 
-        #itinerary-list { padding: 15px; }
-        .item-wrapper { position: relative; margin-bottom: 10px; }
-        .stay-time { padding-left: 65px; font-size: 0.8em; color: var(--primary); margin: 8px 0; font-weight: bold; }
-        .item-card { background: white; border-radius: 12px; padding: 15px; display: flex; gap: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
-        .item-left { display: flex; flex-direction: column; align-items: center; width: 45px; flex-shrink: 0; justify-content: center; }
-        .item-icon-circle { width: 34px; height: 34px; background: #f0f2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 4px 0; font-size: 1.1em; }
-        .item-time-top, .item-time-bottom { font-size: 0.7em; color: #999; }
-        .item-main { flex: 1; overflow: hidden; }
-        .item-title { font-weight: bold; font-size: 1.05em; color: #222; }
-        .badge { font-size: 0.65em; padding: 2px 8px; border-radius: 12px; border: 1px solid #ddd; color: #666; margin-right: 5px; display: inline-block; margin-top: 5px; }
-        .badge-map { border-color: #2196f3; color: #2196f3; }
-        .expense-tag { font-size: 0.7em; color: #ff9800; background: #fff3e0; padding: 2px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
-
-        .fab { position: fixed; bottom: 85px; right: 20px; width: 56px; height: 56px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3); z-index: 1000; border: none; }
-
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: none; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000; }
-        nav.active { display: flex; }
-        nav button { background: none; border: none; color: #888; font-size: 0.75em; flex: 1; }
-        nav button.active { color: var(--primary); font-weight: bold; }
+        /* Action Buttons Container */
+        .actions-fab { position: fixed; bottom: 25px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
+        .fab-btn { width: 50px; height: 50px; border-radius: 50%; border: none; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; }
+        .fab-event { background: var(--primary); }
+        .fab-expense { background: #ff9800; }
+        .fab-label { position: absolute; right: 60px; background: white; color: #333; padding: 4px 10px; border-radius: 8px; font-size: 0.75em; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); white-space: nowrap; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: flex-end; }
         .modal.active { display: flex; }
-        .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 20px; box-sizing: border-box; overflow-y: auto; max-height: 90vh; }
+        .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 20px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
         .form-row { margin-bottom: 12px; }
         .form-row label { display: block; font-size: 0.8em; color: #666; margin-bottom: 4px; }
         .form-row input, .form-row textarea, .form-row select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1em; }
@@ -82,14 +76,14 @@
 
 <div id="view-login">
     <div style="font-size: 3em; margin-bottom: 10px;">✈️</div>
-    <h2 style="margin-bottom: 20px;">旅行隨身 App</h2>
+    <h2>旅行隨身 App</h2>
     <input type="text" id="user-name" placeholder="你的名字">
     <input type="password" id="access-key" placeholder="GitHub Token">
     <button onclick="handleLogin()">登入並同步</button>
 </div>
 
 <header>
-    <div class="back-btn" id="btn-back" onclick="showHome()" style="display:none;">❮</div>
+    <div class="back-btn" onclick="showHome()">❮</div>
     <h1 id="header-title">我的行程</h1>
     <div class="header-right">
         <button id="mates-btn" onclick="openMatesModal()">👥 旅伴</button>
@@ -105,275 +99,157 @@
         <button style="width:100%; background:var(--secondary); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;" onclick="openTripModal()">➕ 新增旅行行程</button>
     </div>
     <div id="view-detail">
-        <div id="tab-itinerary" class="tab-content active">
-            <div id="map-container"><div id="map"></div></div>
-            <div class="day-tabs" id="day-tabs"></div>
-            <div id="hotel-bar" class="hotel-bar" onclick="openHotelModal()">
-                <div class="hotel-icon">🏨</div>
-                <div class="hotel-info">
-                    <div id="hotel-name-display" class="hotel-title">尚未設定今日住宿</div>
-                    <div id="hotel-addr-display" class="hotel-addr">點擊在此設定酒店及地址</div>
-                </div>
-                <div style="color: #2196f3; font-size: 0.8em; white-space:nowrap;">編輯 ❯</div>
-            </div>
-            <div id="itinerary-list"></div>
+        <div id="map-container"><div id="map" style="width:100%; height:100%;"></div></div>
+        <div class="day-tabs" id="day-tabs"></div>
+        
+        <div class="settlement-box" id="settlement-container" style="display:none;">
+            <h4>💰 當前分帳結餘</h4>
+            <div id="settlement-list" class="settlement-list"></div>
         </div>
-        <div id="tab-budget" class="tab-content" style="padding:15px;">
-            <h3>💰 分帳結算</h3>
-            <div id="settlement-list" style="background:white; border-radius:12px; padding:15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);"></div>
-        </div>
+
+        <div id="hotel-bar" class="hotel-bar" onclick="openHotelModal()">🏨 住宿設定 ❯</div>
+        
+        <div id="combined-list"></div>
     </div>
 </div>
 
-<button class="fab" id="main-fab" onclick="openItemModal()" style="display:none;">+</button>
-
-<nav id="app-nav">
-    <button onclick="switchTab('itinerary')" id="nav-itinerary" class="active">🗺️<br>行程</button>
-    <button onclick="switchTab('budget')" id="nav-budget">💰<br>分帳</button>
-</nav>
+<div class="actions-fab" id="trip-actions" style="display:none;">
+    <div style="display:flex; align-items:center; justify-content:flex-end;">
+        <span class="fab-label">加入開支</span>
+        <button class="fab-btn fab-expense" onclick="openExpenseModal()">💰</button>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:flex-end;">
+        <span class="fab-label">新增行程</span>
+        <button class="fab-btn fab-event" onclick="openItemModal()">📍</button>
+    </div>
+</div>
 
 <!-- Modals -->
-<div id="data-modal" class="modal" onclick="if(event.target==this)this.classList.remove('active')"><div class="modal-content">
-    <h3>📈 機價走勢 (大阪行程)</h3>
-    <div id="data-details-box"></div>
-    <div style="height: 250px;"><canvas id="priceChart"></canvas></div>
-    <button style="width: 100%; padding: 12px; border-radius: 10px; border: none; background: #eee; margin-top: 20px;" onclick="document.getElementById('data-modal').classList.remove('active')">關閉</button>
-</div></div>
-
-<div id="mates-modal" class="modal"><div class="modal-content">
-    <h3>👥 旅伴管理</h3>
-    <div class="form-row"><label>旅伴名字 (以逗號分隔)</label><input type="text" id="mates-input" placeholder="例如：Chun, SzeYuen, Alan"></div>
-    <div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('mates-modal').classList.remove('active')">取消</button><button style="background:var(--primary); color:white;" onclick="saveMates()">儲存</button></div>
-</div></div>
-
-<div id="trip-modal" class="modal"><div class="modal-content">
-    <h3>🌍 新增旅行</h3>
-    <div class="form-row"><label>名稱</label><input type="text" id="new-trip-title"></div>
-    <div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>開始</label><input type="date" id="new-trip-start"></div><div style="flex:1;"><label>結束</label><input type="date" id="new-trip-end"></div></div>
-    <div class="modal-footer"><button style="background:#eee;" onclick="closeTripModal()">取消</button><button style="background:var(--primary);color:white;" onclick="addNewTrip()">建立</button></div>
-</div></div>
-
-<div id="hotel-modal" class="modal"><div class="modal-content">
-    <h3>🏨 設定住宿</h3>
-    <div class="form-row"><label>酒店名稱</label><input type="text" id="hotel-name-input"></div>
-    <div class="form-row"><label>地址</label><input type="text" id="hotel-addr-input"></div>
-    <div class="form-row"><label style="color:#2196f3; font-weight:bold;">套用到日期：</label><div id="hotel-day-selector" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-top:10px;"></div></div>
-    <div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('hotel-modal').classList.remove('active')">取消</button><button style="background:#2196f3; color:white;" onclick="saveHotel()">儲存</button></div>
+<div id="expense-modal" class="modal"><div class="modal-content">
+    <h3>💰 加入開支</h3>
+    <div class="form-row"><label>項目名稱</label><input type="text" id="exp-name" placeholder="例如：藥妝、晚餐"></div>
+    <div class="form-row" style="display:flex; gap:10px;">
+        <div style="flex:1;"><label>金額</label><input type="number" id="exp-amount"></div>
+        <div style="flex:1;"><label>付款人</label><select id="exp-paid-by"></select></div>
+    </div>
+    <div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('expense-modal').classList.remove('active')">取消</button><button style="background:#ff9800; color:white;" onclick="saveExpense()">儲存開支</button></div>
 </div></div>
 
 <div id="item-modal" class="modal"><div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 id="item-modal-title" style="margin:0;">新增活動</h3><button onclick="toggleFlightMode()" id="flight-mode-btn" style="background:#f0f0f0; border:1px solid #ddd; padding:4px 10px; border-radius:15px; font-size:0.8em;">✈️ 航班模式</button></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 id="item-modal-title" style="margin:0;">新增行程</h3><button onclick="toggleFlightMode()" id="flight-mode-btn" style="background:#f0f0f0; border:1px solid #ddd; padding:4px 10px; border-radius:15px; font-size:0.8em;">✈️ 航班模式</button></div>
     <div id="normal-fields">
-        <div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>開始</label><input type="time" id="item-time" value="09:00"></div><div style="flex:1;"><label>結束</label><input type="time" id="item-time-end" value="10:00"></div></div>
+        <div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>開始</label><input type="time" id="item-time" value="09:00"></div><div style="flex:1;"><label>結束</label><input type="time" id="item-time-end"></div></div>
         <div class="form-row"><label>名稱</label><input type="text" id="item-name"></div>
-        <div class="form-row"><label>副標題</label><input type="text" id="item-sub"></div>
         <div class="form-row"><label>地點</label><input type="text" id="item-location"></div>
-        <div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>金額</label><input type="number" id="item-budget"></div><div style="flex:1;"><label>付款人</label><select id="item-paid-by"><option value="">無</option></select></div></div>
-        <div class="form-row"><label>備註</label><textarea id="item-remark" rows="2"></textarea></div>
     </div>
     <div id="flight-fields" style="display:none;">
-        <div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>起飛 (當地)</label><input type="time" id="flight-time" value="09:00"></div><div style="flex:1;"><label>抵達 (當地)</label><input type="time" id="flight-arrival-time" value="13:30"></div></div>
+        <div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>起飛</label><input type="time" id="flight-time"></div><div style="flex:1;"><label>抵達</label><input type="time" id="flight-arrival-time"></div></div>
         <div class="form-row"><label>航空公司</label><input type="text" id="flight-airline"></div>
         <div class="form-row"><label>航班編號</label><input type="text" id="flight-no"></div>
-        <div class="form-row"><label>行李/選項</label><input type="text" id="flight-luggage"></div>
     </div>
-    <div class="modal-footer"><button style="background:#eee;" onclick="closeItemModal()">取消</button><button style="background:var(--primary);color:white;" onclick="saveItem()">儲存</button></div>
+    <div class="modal-footer"><button style="background:#eee;" onclick="closeItemModal()">取消</button><button style="background:var(--primary);color:white;" onclick="saveItem()">儲存行程</button></div>
     <button id="delete-item-btn" style="display:none; width:100%; background:#ff5252; color:white; border:none; padding:12px; border-radius:12px; margin-top:10px; font-weight:bold; cursor:pointer;" onclick="deleteItem()">🗑️ 刪除項目</button>
 </div></div>
+
+<div id="mates-modal" class="modal"><div class="modal-content"><h3>👥 旅伴管理</h3><div class="form-row"><label>名字 (逗號分隔)</label><input type="text" id="mates-input"></div><button style="width:100%; background:var(--primary); color:white; padding:12px; border-radius:10px; border:none;" onclick="saveMates()">儲存</button></div></div>
+<div id="trip-modal" class="modal"><div class="modal-content"><h3>🌍 新增旅行</h3><div class="form-row"><label>名稱</label><input type="text" id="new-trip-title"></div><div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>開始</label><input type="date" id="new-trip-start"></div><div style="flex:1;"><label>結束</label><input type="date" id="new-trip-end"></div></div><div class="modal-footer"><button style="background:#eee;" onclick="closeTripModal()">取消</button><button style="background:var(--primary);color:white;" onclick="addNewTrip()">建立</button></div></div></div>
+<div id="hotel-modal" class="modal"><div class="modal-content"><h3>🏨 設定住宿</h3><div class="form-row"><label>酒店</label><input type="text" id="hotel-name-input"></div><div class="form-row"><label>地址</label><input type="text" id="hotel-addr-input"></div><div id="hotel-day-selector" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('hotel-modal').classList.remove('active')">取消</button><button style="background:#2196f3; color:white;" onclick="saveHotel()">儲存</button></div></div></div>
 
 <script>
     const DATA_REPO = 'tsy-del/japan-trip-2026';
     let GITHUB_TOKEN = localStorage.getItem('app_token'), currentUser = localStorage.getItem('app_user');
-    let myTrips = [], currentTripId = null, currentDay = 1, googleMap = null, markers = [], polyline = null, chartInstance = null;
+    let myTrips = [], currentTripId = null, currentDay = 1, googleMap = null, markers = [], polyline = null;
 
-    function handleLogin() {
-        const n = document.getElementById('user-name').value, t = document.getElementById('access-key').value;
-        if (n && t) { localStorage.setItem('app_user', n); localStorage.setItem('app_token', t); location.reload(); }
-    }
+    function handleLogin() { const n = document.getElementById('user-name').value, t = document.getElementById('access-key').value; if (n && t) { localStorage.setItem('app_user', n); localStorage.setItem('app_token', t); location.reload(); } }
     function handleLogout() { if(confirm('確定登出？')) { localStorage.clear(); location.reload(); } }
 
-    if (currentUser && GITHUB_TOKEN) {
-        document.getElementById('view-login').style.display = 'none';
-        document.getElementById('view-home').classList.add('active');
-        document.getElementById('display-user').innerText = currentUser;
-        syncFromCloud();
-    }
+    if (currentUser && GITHUB_TOKEN) { document.getElementById('view-login').style.display = 'none'; document.getElementById('view-home').classList.add('active'); document.getElementById('display-user').innerText = currentUser; syncFromCloud(); }
 
-    async function syncFromCloud() {
-        try {
-            const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json?t=${Date.now()}`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } });
-            if (!resp.ok) return renderTripList();
-            myTrips = JSON.parse(decodeURIComponent(escape(atob((await resp.json()).content))));
-            renderTripList();
-        } catch (e) { renderTripList(); }
-    }
+    async function syncFromCloud() { try { const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json?t=${Date.now()}`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } }); myTrips = JSON.parse(decodeURIComponent(escape(atob((await resp.json()).content)))); renderTripList(); } catch (e) { renderTripList(); } }
+    async function syncToCloud() { try { const getFile = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } }); const file = await getFile.json(); await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json`, { method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}` }, body: JSON.stringify({ message: `Sync by ${currentUser}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(myTrips, null, 2)))), sha: file.sha }) }); } catch(e) {} }
 
-    async function syncToCloud() {
-        try {
-            const getFile = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
-            const file = await getFile.json();
-            await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json`, {
-                method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}` },
-                body: JSON.stringify({ message: `Sync by ${currentUser}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(myTrips, null, 2)))), sha: file.sha })
-            });
-        } catch(e) { console.error(e); }
-    }
-
-    function renderTripList() {
-        document.getElementById('trip-list').innerHTML = myTrips.map(t => `<div class="trip-card" onclick="showTrip('${t.id}')"><div style="flex:1;"><div style="font-weight:bold;">${t.title}</div><small style="color:#999;">${t.startDate} ~ ${t.endDate}</small></div><div>❯</div></div>`).join('');
-    }
-
-    function showTrip(tid) {
-        currentTripId = tid; currentDay = 1;
-        const t = myTrips.find(x => x.id === tid);
-        document.getElementById('view-home').classList.remove('active');
-        document.getElementById('view-detail').classList.add('active');
-        document.getElementById('app-nav').classList.add('active');
-        document.getElementById('main-fab').style.display = 'flex';
-        document.getElementById('btn-back').style.display = 'block';
-        document.getElementById('delete-trip-btn').style.display = 'block';
-        document.getElementById('mates-btn').style.display = 'block';
+    function renderTripList() { document.getElementById('trip-list').innerHTML = myTrips.map(t => `<div class="trip-card" onclick="showTrip('${t.id}')"><div style="flex:1;"><div style="font-weight:bold;">${t.title}</div><small style="color:#999;">${t.startDate} ~ ${t.endDate}</small></div><div>❯</div></div>`).join(''); }
+    
+    function showTrip(tid) { 
+        currentTripId = tid; currentDay = 1; const t = myTrips.find(x => x.id === tid);
+        document.getElementById('view-home').classList.remove('active'); document.getElementById('view-detail').classList.add('active');
+        document.getElementById('trip-actions').style.display = 'flex'; document.getElementById('btn-back').style.display = 'block';
+        document.getElementById('delete-trip-btn').style.display = 'block'; document.getElementById('mates-btn').style.display = 'block';
         document.getElementById('header-title').innerText = t.title;
-        document.getElementById('data-btn').style.display = (tid === 'osaka-2026' || t.title.includes('大阪')) ? 'block' : 'none';
-        updatePaidByDropdown();
-        if (!googleMap) initMap();
-        renderDayTabs(); renderItinerary();
+        if (!googleMap) initMap(); renderDayTabs(); renderCombinedList();
     }
-
-    function showHome() { 
-        document.getElementById('view-detail').classList.remove('active'); document.getElementById('view-home').classList.add('active');
-        document.getElementById('app-nav').classList.remove('active'); document.getElementById('main-fab').style.display = 'none';
-        document.getElementById('btn-back').style.display = 'none'; document.getElementById('delete-trip-btn').style.display = 'none';
-        document.getElementById('data-btn').style.display = 'none'; document.getElementById('mates-btn').style.display = 'none';
-        document.getElementById('header-title').innerText = '我的行程';
-        renderTripList();
-    }
-
-    function deleteEntireTrip() { if(confirm('確定永久刪除整個旅行？')) { myTrips = myTrips.filter(t => t.id !== currentTripId); syncToCloud(); showHome(); } }
-
-    function initMap() {
-        googleMap = new google.maps.Map(document.getElementById("map"), { center: { lat: 35.6895, lng: 139.6917 }, zoom: 12, mapTypeControl: false, streetViewControl: false, fullscreenControl: false });
-        const input = document.getElementById('item-location');
-        const autocomplete = new google.maps.places.Autocomplete(input);
-        autocomplete.bindTo('bounds', googleMap);
-    }
+    function showHome() { location.reload(); }
 
     function renderDayTabs() {
-        const t = myTrips.find(x => x.id === currentTripId);
-        const start = new Date(t.startDate), end = new Date(t.endDate);
-        const days = Math.ceil((end - start) / 86400000) + 1;
-        let h = ''; for(let i=1; i<=days; i++) {
-            const curr = new Date(start); curr.setDate(start.getDate() + (i-1));
-            h += `<div class="day-tab ${i===currentDay?'active':''}" onclick="currentDay=${i};renderDayTabs();renderItinerary();"><div class="tab-date">${curr.getMonth()+1}/${curr.getDate()}</div><div class="tab-name">第 ${i} 天</div></div>`;
-        }
+        const t = myTrips.find(x => x.id === currentTripId), s = new Date(t.startDate), e = new Date(t.endDate), d = Math.ceil((e - s) / 86400000) + 1;
+        let h = ''; for(let i=1; i<=d; i++) { const c = new Date(s); c.setDate(s.getDate() + (i-1)); h += `<div class="day-tab ${i===currentDay?'active':''}" onclick="currentDay=${i};renderDayTabs();renderCombinedList();"><div class="tab-date">${c.getMonth()+1}/${c.getDate()}</div><div class="tab-name">D${i}</div></div>`; }
         document.getElementById('day-tabs').innerHTML = h;
     }
 
-    function renderItinerary() {
-        const trip = myTrips.find(x=>x.id===currentTripId);
-        const items = (trip.items || []).filter(x=>x.day===currentDay).sort((a,b)=>a.time.localeCompare(b.time));
-        if (!trip.hotels) trip.hotels = {};
-        const hotel = trip.hotels[currentDay];
+    function renderCombinedList() {
+        const t = myTrips.find(x=>x.id===currentTripId);
+        const items = (t.items || []).filter(x=>x.day===currentDay).sort((a,b)=>a.time.localeCompare(b.time));
+        const exps = (t.expenses || []).filter(x=>x.day===currentDay);
+        
+        let html = '';
+        items.forEach(item => {
+            html += `<div class="item-card" onclick="editItem(${item.id})"><div class="item-time-box">${item.time}</div><div class="item-main"><div class="item-title">${item.name}</div><small style="color:#999;">${item.location||''}</small></div></div>`;
+        });
+        exps.forEach(e => {
+            html += `<div class="expense-card" onclick="deleteExpense(${e.id})"><div class="exp-info">💸 <b>${e.name}</b><br><small>${e.paidBy} 支付</small></div><div class="exp-amount">${e.amount.toLocaleString()}</div></div>`;
+        });
+        document.getElementById('combined-list').innerHTML = html || '<p style="text-align:center;color:#999;padding:40px;">這天還沒有行程或開支</p>';
+        
+        if (!t.hotels) t.hotels = {};
+        const hotel = t.hotels[currentDay];
         document.getElementById('hotel-name-display').innerText = hotel ? hotel.name : '尚未設定今日住宿';
-        document.getElementById('hotel-addr-display').innerText = hotel ? hotel.address : '點擊在此設定酒店及地址';
-        document.getElementById('itinerary-list').innerHTML = items.length ? items.map((item) => {
-            const dur = item.endTime ? calculateDuration(item.time, item.endTime) : '';
-            return `<div class="item-wrapper" onclick="editItem(${item.id})"><div class="item-card"><div class="item-left"><div class="item-time-top">${item.time}</div><div class="item-icon-circle">📍</div><div class="item-time-bottom">${item.endTime || '--'}</div></div><div class="item-main"><div class="item-title">${item.name}</div><div style="font-size:0.8em;color:#888;">${item.subtitle||''}</div><small style="color:#999;font-size:0.7em;">${item.location||''}</small><div>${item.budget > 0 ? `<span class="expense-tag">💰 ${item.paidBy || '??'} 出資: ${item.budget.toLocaleString()}</span>` : ''}</div></div></div>${dur?`<div class="stay-time">⏳ 停留 ${dur}</div>`:''}</div>`;
-        }).join('') : '<p style="text-align:center;color:#999;padding:40px;">這天還沒有行程</p>';
+        document.getElementById('hotel-addr-display').innerText = hotel ? hotel.address : '點擊設定酒店地址';
+        
         updateMapMarkers(items, hotel);
         calculateSettlement();
     }
 
+    function openExpenseModal() { updatePaidByDropdown(); document.getElementById('expense-modal').classList.add('active'); }
+    function saveExpense() {
+        const t = myTrips.find(x=>x.id===currentTripId); if(!t.expenses) t.expenses = [];
+        t.expenses.push({ id:Date.now(), day:currentDay, name:document.getElementById('exp-name').value, amount:parseInt(document.getElementById('exp-amount').value)||0, paidBy:document.getElementById('exp-paid-by').value });
+        syncToCloud(); renderCombinedList(); document.getElementById('expense-modal').classList.remove('active');
+        document.getElementById('exp-name').value = ''; document.getElementById('exp-amount').value = '';
+    }
+    function deleteExpense(id) { if(confirm('刪除這筆開支？')) { const t = myTrips.find(x=>x.id===currentTripId); t.expenses = t.expenses.filter(x=>x.id!==id); syncToCloud(); renderCombinedList(); } }
+
     function calculateSettlement() {
-        const t = myTrips.find(x => x.id === currentTripId);
-        const mates = t.mates || [];
-        if (mates.length === 0) return document.getElementById('settlement-list').innerHTML = '請先設定旅伴名單';
+        const t = myTrips.find(x => x.id === currentTripId); const mates = t.mates || [];
+        if (mates.length === 0) { document.getElementById('settlement-container').style.display='none'; return; }
+        document.getElementById('settlement-container').style.display='block';
         let balances = {}; mates.forEach(m => balances[m] = 0);
-        (t.items || []).forEach(item => { if (item.budget > 0 && item.paidBy) { let share = item.budget / mates.length; mates.forEach(m => balances[m] -= share); balances[item.paidBy] += item.budget; } });
-        let html = '<ul>'; for (let m in balances) { let b = Math.round(balances[m]); html += `<li>${m}: <span style="color:${b>=0?'green':'red'}; font-weight:bold;">${b>0?'+':''}${b.toLocaleString()}</span></li>`; }
-        document.getElementById('settlement-list').innerHTML = html + '</ul>';
+        (t.expenses || []).forEach(e => { let share = e.amount / mates.length; mates.forEach(m => balances[m] -= share); balances[e.paidBy] += e.amount; });
+        document.getElementById('settlement-list').innerHTML = Object.keys(balances).map(m => `<li><span>${m}</span><span style="color:${balances[m]>=0?'#4caf50':'#ff5252'}; font-weight:bold;">${balances[m]>0?'+':''}${Math.round(balances[m]).toLocaleString()}</span></li>`).join('');
     }
 
+    function updatePaidByDropdown() { const mates = myTrips.find(x => x.id === currentTripId).mates || []; document.getElementById('exp-paid-by').innerHTML = mates.map(m => `<option value="${m}">${m}</option>`).join(''); }
+    function openMatesModal() { const t = myTrips.find(x => x.id === currentTripId); document.getElementById('mates-input').value = (t.mates || []).join(', '); document.getElementById('mates-modal').classList.add('active'); }
+    function saveMates() { const t = myTrips.find(x => x.id === currentTripId); t.mates = document.getElementById('mates-input').value.split(',').map(s => s.trim()).filter(s => s); syncToCloud(); renderCombinedList(); document.getElementById('mates-modal').classList.remove('active'); }
+    function initMap() { googleMap = new google.maps.Map(document.getElementById("map"), { center: { lat: 35.6895, lng: 139.6917 }, zoom: 12, mapTypeControl: false, streetViewControl: false, fullscreenControl: false }); }
     async function updateMapMarkers(items, hotel) {
         markers.forEach(m => m.setMap(null)); markers = []; if (polyline) polyline.setMap(null);
         const geocoder = new google.maps.Geocoder(), path = [], bounds = new google.maps.LatLngBounds();
-        if (hotel && hotel.address) {
-            try {
-                const res = await new Promise((rs, rj) => geocoder.geocode({ address: hotel.address }, (r, s) => s === "OK" ? rs(r[0].geometry.location) : rj(s)));
-                markers.push(new google.maps.Marker({ position: res, map: googleMap, icon: { url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" } }));
-                bounds.extend(res);
-            } catch(e) {}
-        }
+        if (hotel && hotel.address) { try { const res = await new Promise((rs, rj) => geocoder.geocode({ address: hotel.address }, (r, s) => s === "OK" ? rs(r[0].geometry.location) : rj(s))); markers.push(new google.maps.Marker({ position: res, map: googleMap, icon: { url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" } })); bounds.extend(res); } catch(e) {} }
         for (const item of items) { if (item.location) { try { const res = await new Promise((rs, rj) => geocoder.geocode({ address: item.location }, (r, s) => s === "OK" ? rs(r[0].geometry.location) : rj(s))); markers.push(new google.maps.Marker({ position: res, map: googleMap, label: String(markers.length) })); path.push(res); bounds.extend(res); } catch(e) {} } }
         if (path.length > 1) polyline = new google.maps.Polyline({ path: path, strokeColor: "#e91e63", map: googleMap });
         if (!bounds.isEmpty()) googleMap.fitBounds(bounds);
     }
-
-    function calculateDuration(start, end) {
-        let [sH, sM] = start.split(':').map(Number), [eH, eM] = end.split(':').map(Number);
-        let diff = (eH * 60 + eM) - (sH * 60 + sM); if (diff < 0) diff += 1440;
-        let h = Math.floor(diff / 60), m = diff % 60; return (h > 0 ? h + '小時' : '') + (m > 0 ? m + '分' : '');
-    }
-
-    function openMatesModal() { const t = myTrips.find(x => x.id === currentTripId); document.getElementById('mates-input').value = (t.mates || []).join(', '); document.getElementById('mates-modal').classList.add('active'); }
-    function saveMates() { const t = myTrips.find(x => x.id === currentTripId); t.mates = document.getElementById('mates-input').value.split(',').map(s => s.trim()).filter(s => s); syncToCloud(); updatePaidByDropdown(); document.getElementById('mates-modal').classList.remove('active'); }
-    function updatePaidByDropdown() { const mates = myTrips.find(x => x.id === currentTripId).mates || []; document.getElementById('item-paid-by').innerHTML = '<option value="">無</option>' + mates.map(m => `<option value="${m}">${m}</option>`).join(''); }
-
-    function openHotelModal() {
-        const trip = myTrips.find(x => x.id === currentTripId), hotel = (trip.hotels || {})[currentDay] || { name: '', address: '' };
-        document.getElementById('hotel-name-input').value = hotel.name; document.getElementById('hotel-addr-input').value = hotel.address;
-        const start = new Date(trip.startDate), end = new Date(trip.endDate), days = Math.ceil((end - start) / 86400000) + 1;
-        let h = ''; for(let i=1; i<=days; i++) h += `<label><input type="checkbox" class="hotel-day-check" value="${i}" ${i==currentDay?'checked':''}> D${i}</label>`;
-        document.getElementById('hotel-day-selector').innerHTML = h; document.getElementById('hotel-modal').classList.add('active');
-        const ac = new google.maps.places.Autocomplete(document.getElementById('hotel-addr-input')); ac.bindTo('bounds', googleMap);
-    }
-    function saveHotel() { const t = myTrips.find(x => x.id === currentTripId); if (!t.hotels) t.hotels = {}; const data = { name: document.getElementById('hotel-name-input').value, address: document.getElementById('hotel-addr-input').value }; document.querySelectorAll('.hotel-day-check:checked').forEach(chk => { t.hotels[chk.value] = { ...data }; }); syncToCloud(); renderItinerary(); document.getElementById('hotel-modal').classList.remove('active'); }
-
-    async function showDataModal() {
-        document.getElementById('data-modal').classList.add('active');
-        const resp = await fetch('data.json?t=' + Date.now()), data = await resp.json(), latest = data[data.length-1], ctx = document.getElementById('priceChart').getContext('2d');
-        document.getElementById('data-details-box').innerHTML = `<div style="background:#f0f2f5; padding:10px; border-radius:10px; margin-bottom:15px; font-size:0.85em;"><div style="display:flex; justify-content:space-between;"><span>✈️ UO686</span><b>HK$ ${latest.uo686}</b></div><div style="display:flex; justify-content:space-between;"><span>✈️ UO899</span><b>HK$ ${latest.uo899}</b></div><hr>選項：Essential/Max (含行李)</div>`;
-        if(chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, { type: 'line', data: { labels: data.map(d => d.date.split(' ')[0]), datasets: [{ label: '總價', data: data.map(d => d.total), borderColor: '#e91e63', tension: 0.3, fill: true }] }, options: { responsive: true, maintainAspectRatio: false } });
-    }
-
-    function openItemModal() { editingItemId = null; document.getElementById('item-modal-title').innerText = '新增活動'; document.getElementById('delete-item-btn').style.display = 'none'; document.getElementById('flight-mode-btn').style.display = 'block'; document.getElementById('item-modal').classList.add('active'); }
+    function openItemModal() { editingItemId = null; document.getElementById('delete-item-btn').style.display = 'none'; document.getElementById('item-modal').classList.add('active'); }
     function closeItemModal() { document.getElementById('item-modal').classList.remove('active'); }
-    function editItem(id) {
-        editingItemId = id; const item = myTrips.find(x => x.id === currentTripId).items.find(x => x.id === id);
-        document.getElementById('item-modal-title').innerText = '修改活動';
-        document.getElementById('item-time').value = item.time; document.getElementById('item-time-end').value = item.endTime || ''; document.getElementById('item-name').value = item.name; document.getElementById('item-sub').value = item.subtitle || ''; document.getElementById('item-location').value = item.location || ''; document.getElementById('item-remark').value = item.remark || ''; document.getElementById('item-budget').value = item.budget || 0; document.getElementById('item-paid-by').value = item.paidBy || '';
-        document.getElementById('normal-fields').style.display = 'block'; document.getElementById('flight-fields').style.display = 'none'; document.getElementById('delete-item-btn').style.display = 'block'; document.getElementById('flight-mode-btn').style.display = 'none'; document.getElementById('item-modal').classList.add('active');
-    }
-    function deleteItem() { if (confirm('刪除？')) { const t = myTrips.find(x => x.id === currentTripId); t.items = t.items.filter(x => x.id !== editingItemId); syncToCloud(); renderItinerary(); closeItemModal(); } }
-
-    let isFlightMode = false;
-    function toggleFlightMode() { isFlightMode = !isFlightMode; document.getElementById('normal-fields').style.display = isFlightMode ? 'none' : 'block'; document.getElementById('flight-fields').style.display = isFlightMode ? 'block' : 'none'; document.getElementById('flight-mode-btn').innerText = isFlightMode ? '📝 普通' : '✈️ 航班'; }
-    function openTripModal() { document.getElementById('trip-modal').classList.add('active'); const today = new Date().toISOString().split('T')[0]; document.getElementById('new-trip-start').value = today; document.getElementById('new-trip-end').value = today; }
+    function editItem(id) { editingItemId = id; const item = myTrips.find(x => x.id === currentTripId).items.find(x => x.id === id); document.getElementById('item-time').value = item.time; document.getElementById('item-time-end').value = item.endTime || ''; document.getElementById('item-name').value = item.name; document.getElementById('item-location').value = item.location || ''; document.getElementById('normal-fields').style.display = 'block'; document.getElementById('flight-fields').style.display = 'none'; document.getElementById('delete-item-btn').style.display = 'block'; document.getElementById('item-modal').classList.add('active'); }
+    function saveItem() { const trip = myTrips.find(x=>x.id===currentTripId); if(!trip.items) trip.items = []; if (editingItemId) { const idx = trip.items.findIndex(x => x.id === editingItemId); trip.items[idx] = { ...trip.items[idx], time: document.getElementById('item-time').value, endTime: document.getElementById('item-time-end').value, name: document.getElementById('item-name').value, location: document.getElementById('item-location').value }; } else { trip.items.push({ id:Date.now(), day:currentDay, time:document.getElementById('item-time').value, endTime:document.getElementById('item-time-end').value, name:document.getElementById('item-name').value, location:document.getElementById('item-location').value }); } syncToCloud(); renderCombinedList(); closeItemModal(); }
+    function deleteItem() { if (confirm('刪除？')) { const t = myTrips.find(x => x.id === currentTripId); t.items = t.items.filter(x => x.id !== editingItemId); syncToCloud(); renderCombinedList(); closeItemModal(); } }
+    let isFlightMode = false; function toggleFlightMode() { isFlightMode = !isFlightMode; document.getElementById('normal-fields').style.display = isFlightMode ? 'none' : 'block'; document.getElementById('flight-fields').style.display = isFlightMode ? 'block' : 'none'; }
+    function openTripModal() { document.getElementById('trip-modal').classList.add('active'); }
     function closeTripModal() { document.getElementById('trip-modal').classList.remove('active'); }
-    function addNewTrip() {
-        const t = document.getElementById('new-trip-title').value, s = document.getElementById('new-trip-start').value, e = document.getElementById('new-trip-end').value;
-        if(!t || !s || !e) return alert('必填');
-        const nt = { id:'trip-'+Date.now(), title:t, startDate:s, endDate:e, items:[], hotels:{} };
-        myTrips.push(nt); syncToCloud(); renderTripList(); closeTripModal(); showTrip(nt.id);
-    }
-    function saveItem() {
-        const trip = myTrips.find(x=>x.id===currentTripId); if(!trip.items) trip.items = [];
-        if (editingItemId) { const idx = trip.items.findIndex(x => x.id === editingItemId); trip.items[idx] = { ...trip.items[idx], time: document.getElementById('item-time').value, endTime: document.getElementById('item-time-end').value, name: document.getElementById('item-name').value, subtitle: document.getElementById('item-sub').value, location: document.getElementById('item-location').value, remark: document.getElementById('item-remark').value, budget: parseInt(document.getElementById('item-budget').value)||0, paidBy: document.getElementById('item-paid-by').value }; }
-        else if (isFlightMode) {
-            const fTime = document.getElementById('flight-time').value, airline = document.getElementById('flight-airline').value, fNo = document.getElementById('flight-no').value, arrivalTime = document.getElementById('flight-arrival-time').value, luggage = document.getElementById('flight-luggage').value, [h, m] = fTime.split(':').map(Number), checkInTime = `${String((h-2+24)%24).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-            trip.items.push({ id: Date.now(), day: currentDay, time: checkInTime, endTime: fTime, name: "🚀 抵達機場辦理登機 & 報到", subtitle: "建議提前2小時到達", location: "", remark: "" });
-            trip.items.push({ id: Date.now()+1, day: currentDay, time: fTime, endTime: arrivalTime, name: `✈️ ${airline} ${fNo}`, subtitle: `選項: ${luggage}`, location: "", remark: "注意：抵達時間為當地時間" });
-            toggleFlightMode();
-        } else { trip.items.push({ id:Date.now(), day:currentDay, time:document.getElementById('item-time').value, endTime:document.getElementById('item-time-end').value, name:document.getElementById('item-name').value, subtitle:document.getElementById('item-sub').value, location:document.getElementById('item-location').value, remark:document.getElementById('item-remark').value, budget: parseInt(document.getElementById('item-budget').value)||0, paidBy: document.getElementById('item-paid-by').value }); }
-        syncToCloud(); renderItinerary(); closeItemModal();
-    }
-    function switchTab(id) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + id).classList.add('active');
-        document.getElementById('nav-' + id).classList.add('active');
-    }
+    function addNewTrip() { const nt = { id:'trip-'+Date.now(), title:document.getElementById('new-trip-title').value, startDate:document.getElementById('new-trip-start').value, endDate:document.getElementById('new-trip-end').value, items:[], expenses:[], mates:[], hotels:{} }; myTrips.push(nt); syncToCloud(); showTrip(nt.id); }
+    function openHotelModal() { const trip = myTrips.find(x => x.id === currentTripId), hotel = (trip.hotels || {})[currentDay] || { name: '', address: '' }; document.getElementById('hotel-name-input').value = hotel.name; document.getElementById('hotel-addr-input').value = hotel.address; const s = new Date(trip.startDate), e = new Date(trip.endDate), d = Math.ceil((e - s) / 86400000) + 1; let h = ''; for(let i=1; i<=d; i++) h += `<label><input type="checkbox" class="hotel-day-check" value="${i}" ${i==currentDay?'checked':''}> D${i}</label>`; document.getElementById('hotel-day-selector').innerHTML = h; document.getElementById('hotel-modal').classList.add('active'); }
+    function saveHotel() { const t = myTrips.find(x => x.id === currentTripId); if (!t.hotels) t.hotels = {}; const data = { name: document.getElementById('hotel-name-input').value, address: document.getElementById('hotel-addr-input').value }; document.querySelectorAll('.hotel-day-check:checked').forEach(chk => { t.hotels[chk.value] = { ...data }; }); syncToCloud(); renderCombinedList(); document.getElementById('hotel-modal').classList.remove('active'); }
 </script>
 </body>
 </html>
