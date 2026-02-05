@@ -44,9 +44,11 @@
         .day-tab.active::after { content: ''; width: 20px; height: 3px; background: var(--primary); position: absolute; bottom: 0; border-radius: 2px; }
 
         .settlement-box { background: #333; color: white; margin: 15px; padding: 15px; border-radius: 15px; font-size: 0.85em; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .settlement-box h4 { margin: 0 0 10px 0; color: #ffeb3b; display: flex; justify-content: space-between; }
-        .settlement-list { list-style: none; padding: 0; margin: 0; }
-        .settlement-list li { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .settlement-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .settlement-table th { text-align: left; color: #aaa; font-size: 0.8em; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .settlement-table td { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .settlement-total-row { background: rgba(255,255,255,0.05); font-weight: bold; }
+        .settlement-total-row td { color: #ffeb3b; border-top: 1px solid rgba(255,255,255,0.2); }
 
         .hotel-bar { background: #e3f2fd; border-radius: 12px; padding: 12px 15px; margin: 15px; display: flex; align-items: center; gap: 12px; border: 1px dashed #2196f3; cursor: pointer; }
         .hotel-icon { font-size: 1.4em; }
@@ -118,8 +120,28 @@
         <div class="day-tabs" id="day-tabs"></div>
         
         <div class="settlement-box" id="settlement-container" style="display:none;">
-            <h4>💰 分帳結餘 <small style="font-weight:normal; font-size:0.7em; color:#aaa;">(每人應付)</small></h4>
-            <div id="settlement-list" class="settlement-list"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="margin:0; color:#ffeb3b;">💰 分帳概覽</h4>
+                <button onclick="toggleExpenseDetails()" style="background:none; border:1px solid #666; color:#aaa; font-size:0.7em; padding:2px 8px; border-radius:10px;">明細 ❯</button>
+            </div>
+            <table class="settlement-table">
+                <thead>
+                    <tr>
+                        <th>成員</th>
+                        <th>已付</th>
+                        <th style="text-align:right;">應付/餘額</th>
+                    </tr>
+                </thead>
+                <tbody id="settlement-table-body"></tbody>
+            </table>
+        </div>
+
+        <div id="expense-details-section" style="display:none; padding:0 15px 15px 15px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h4 style="margin:0;">📋 所有開支明細</h4>
+                <button onclick="toggleExpenseDetails()" style="background:none; border:none; color:var(--primary); font-size:0.8em;">收起</button>
+            </div>
+            <div id="all-expenses-list"></div>
         </div>
 
         <div id="hotel-bar" class="hotel-bar" onclick="openHotelModal()">
@@ -288,12 +310,66 @@
     function deleteExpense(id) { if(confirm('刪除這筆開支？')) { const t = myTrips.find(x=>x.id===currentTripId); t.expenses = t.expenses.filter(x=>x.id!==id); syncToCloud(); renderCombinedList(); } }
 
     function calculateSettlement() {
-        const t = myTrips.find(x => x.id === currentTripId); const mates = t.mates || [];
+        const t = myTrips.find(x => x.id === currentTripId);
+        const mates = t.mates || [];
         if (mates.length === 0) { document.getElementById('settlement-container').style.display='none'; return; }
         document.getElementById('settlement-container').style.display='block';
-        let balances = {}; mates.forEach(m => balances[m] = 0);
-        (t.expenses || []).forEach(e => { let share = e.amount / mates.length; mates.forEach(m => balances[m] -= share); balances[e.paidBy] += e.amount; });
-        document.getElementById('settlement-list').innerHTML = Object.keys(balances).map(m => `<li><span>${m}</span><span style="color:${balances[m]>=0?'#4caf50':'#ff5252'}; font-weight:bold;">${balances[m]>0?'+':''}${Math.round(balances[m]).toLocaleString()}</span></li>`).join('');
+        
+        let paid = {}; 
+        let totalTripExpense = 0;
+        mates.forEach(m => paid[m] = 0);
+        
+        (t.expenses || []).forEach(e => {
+            paid[e.paidBy] += e.amount;
+            totalTripExpense += e.amount;
+        });
+
+        const perPerson = totalTripExpense / mates.length;
+        let html = '';
+        mates.forEach(m => {
+            const balance = paid[m] - perPerson;
+            html += `<tr>
+                <td>${m}</td>
+                <td>${paid[m].toLocaleString()}</td>
+                <td style="text-align:right; color:${balance>=0?'#4caf50':'#ff5252'}; font-weight:bold;">
+                    ${balance > 0 ? '+' : ''}${Math.round(balance).toLocaleString()}
+                </td>
+            </tr>`;
+        });
+        
+        html += `<tr class="settlement-total-row">
+            <td>總計</td>
+            <td>${totalTripExpense.toLocaleString()}</td>
+            <td style="text-align:right;">每人: ${Math.round(perPerson).toLocaleString()}</td>
+        </tr>`;
+
+        document.getElementById('settlement-table-body').innerHTML = html;
+        renderAllExpenses(t.expenses || []);
+    }
+
+    function toggleExpenseDetails() {
+        const section = document.getElementById('expense-details-section');
+        section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        if (section.style.display === 'block') section.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderAllExpenses(expenses) {
+        const list = document.getElementById('all-expenses-list');
+        if (expenses.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:#999; font-size:0.8em;">暫無開支記錄</p>';
+            return;
+        }
+        // 按日期（Day）排序顯示
+        const sorted = [...expenses].sort((a,b) => b.id - a.id); 
+        list.innerHTML = sorted.map(e => `
+            <div class="expense-card" style="padding:10px; margin-bottom:5px; font-size:0.85em;">
+                <div>
+                    <b>Day ${e.day}: ${e.name}</b><br>
+                    <small>${e.paidBy} 支付</small>
+                </div>
+                <div class="exp-amount" style="font-size:0.9em;">${e.amount.toLocaleString()}</div>
+            </div>
+        `).join('');
     }
 
     function openMatesModal() { const t = myTrips.find(x => x.id === currentTripId); document.getElementById('mates-input').value = (t.mates || []).join(', '); document.getElementById('mates-modal').classList.add('active'); }
