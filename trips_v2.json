@@ -112,7 +112,18 @@
     "title": "台灣",
     "startDate": "2026-03-13",
     "endDate": "2026-03-15",
-    "items": [],
+    "items": [
+      {
+        "id": 1770342229628,
+        "day": 1,
+        "time": "10:00",
+        "endTime": "11:43",
+        "name": "台北車站",
+        "subtitle": "",
+        "location": "",
+        "remark": ""
+      }
+    ],
     "expenses": [],
     "mates": [
       "SY",
