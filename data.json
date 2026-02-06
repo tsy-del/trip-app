@@ -16,5 +16,14 @@
     "uo686_3pax": 0,
     "uo899_3pax": 0,
     "total_3pax": 10407
+  },
+  {
+    "date": "2026-02-06 10:36",
+    "uo686_unit": 890,
+    "uo899_unit": 1050,
+    "uo686_3pax": 2670,
+    "uo899_3pax": 3150,
+    "total_base_3pax": 5820,
+    "note": "Prices are base fare without tax/baggage. From HK Express website."
   }
 ]
