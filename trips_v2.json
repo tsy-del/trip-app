@@ -104,6 +104,13 @@
         "name": "Mtr",
         "amount": 5000,
         "paidBy": "Joann"
+      },
+      {
+        "id": 1770340565115,
+        "day": 1,
+        "name": "lunch",
+        "amount": 5000,
+        "paidBy": "Carrie"
       }
     ]
   },
