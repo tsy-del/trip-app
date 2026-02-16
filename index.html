@@ -153,9 +153,12 @@
 
     <!-- Checklist View -->
     <div id="view-checklist">
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
             <input type="text" id="new-check-item" style="flex:1; padding:12px; border-radius:10px; border:1px solid #ddd;" placeholder="新增物品 (例如：充電器)">
             <button onclick="addCheckItem()" style="background:var(--secondary); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:bold;">➕</button>
+        </div>
+        <div style="margin-bottom: 15px; display: flex; gap: 8px;">
+            <button onclick="openCopyChecklistModal()" style="flex: 1; background: #eee; border: none; padding: 8px; border-radius: 8px; font-size: 0.8em; color: #666;">📋 複製自其他行程</button>
         </div>
         <div id="checklist-items"></div>
     </div>
@@ -202,6 +205,7 @@
 <div id="mates-modal" class="modal"><div class="modal-content"><h3>👥 旅伴管理</h3><div class="form-row"><label>名字 (逗號分隔)</label><input type="text" id="mates-input"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('mates-modal').classList.remove('active')">取消</button><button style="background:var(--primary); color:white;" onclick="saveMates()">儲存</button></div></div></div>
 <div id="trip-modal" class="modal"><div class="modal-content"><h3>🌍 新增旅行</h3><div class="form-row"><label>名稱</label><input type="text" id="new-trip-title"></div><div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>開始</label><input type="date" id="new-trip-start"></div><div style="flex:1;"><label>結束</label><input type="date" id="new-trip-end"></div></div><div class="modal-footer"><button style="background:#eee;" onclick="closeTripModal()">取消</button><button style="background:var(--primary);color:white;" onclick="addNewTrip()">建立</button></div></div></div>
 <div id="hotel-modal" class="modal"><div class="modal-content"><h3>🏨 設定住宿</h3><div class="form-row"><label>酒店</label><input type="text" id="hotel-name-input"></div><div class="form-row"><label>地址</label><input type="text" id="hotel-addr-input"></div><div id="hotel-day-selector" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('hotel-modal').classList.remove('active')">取消</button><button style="background:#2196f3; color:white;" onclick="saveHotel()">儲存</button></div></div></div>
+<div id="copy-checklist-modal" class="modal"><div class="modal-content"><h3>📋 複製行李清單</h3><p style="font-size: 0.8em; color: #666;">選擇要從哪個行程複製清單（現有清單會被覆蓋）：</p><div id="trip-copy-list" style="margin: 15px 0;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('copy-checklist-modal').classList.remove('active')">取消</button></div></div></div>
 
 <script>
     const DATA_REPO = 'tsy-del/trip-app';
@@ -331,6 +335,33 @@
         t.checklist.splice(idx, 1);
         renderChecklist();
         syncToCloud();
+    }
+
+    function openCopyChecklistModal() {
+        const list = myTrips.filter(t => t.id !== currentTripId && t.id !== 'global-notes' && t.checklist && t.checklist.length > 0);
+        if (list.length === 0) {
+            alert('暫時冇其他行程有行李清單可以複製。');
+            return;
+        }
+        document.getElementById('trip-copy-list').innerHTML = list.map(t => `
+            <div class="trip-card" style="padding: 15px; margin-bottom: 8px; cursor: pointer; border-left-color: #666;" onclick="copyChecklistFrom('${t.id}')">
+                <div style="font-weight: bold;">${t.title}</div>
+                <small style="color: #999;">${t.checklist.length} 項物品</small>
+            </div>
+        `).join('');
+        document.getElementById('copy-checklist-modal').classList.add('active');
+    }
+
+    function copyChecklistFrom(sourceId) {
+        if (!confirm('確定要覆蓋現有清單嗎？')) return;
+        const source = myTrips.find(t => t.id === sourceId);
+        const target = myTrips.find(t => t.id === currentTripId);
+        // 深拷貝清單，並將所有物品設為未完成 (done: false)
+        target.checklist = source.checklist.map(item => ({ ...item, done: false }));
+        renderChecklist();
+        syncToCloud();
+        document.getElementById('copy-checklist-modal').classList.remove('active');
+        alert('清單已複製！所有物品已重設為未完成狀態。');
     }
 
     function initMap() {
