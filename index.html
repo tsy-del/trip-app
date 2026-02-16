@@ -114,8 +114,19 @@
     <div id="view-home">
         <div id="trip-list"></div>
         <button style="width:100%; background:var(--secondary); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;" onclick="openTripModal()">➕ 新增旅行行程</button>
+        <button style="width:100%; background:#607d8b; color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;" onclick="showNotesView()">📝 旅行備忘錄</button>
     </div>
     <div id="view-detail">
+        <!-- ... (原本內容保持不變) ... -->
+    </div>
+    <div id="view-notes" style="display:none; padding:15px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0;">📝 旅行備忘錄</h3>
+            <button onclick="saveNotes()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:10px; font-weight:bold;">儲存</button>
+        </div>
+        <textarea id="notes-content" style="width:100%; height:70vh; padding:15px; border-radius:12px; border:1px solid #ddd; box-sizing:border-box; font-family:inherit; font-size:1em;" placeholder="喺度輸入你嘅旅行筆記、清單、預約資料..."></textarea>
+    </div>
+</div>
         <div id="map-container"><div id="map"></div></div>
         <div class="day-tabs" id="day-tabs"></div>
         
@@ -244,7 +255,9 @@
     
     function showTrip(tid) { 
         currentTripId = tid; currentDay = 1; const t = myTrips.find(x => x.id === tid);
-        document.getElementById('view-home').classList.remove('active'); document.getElementById('view-detail').classList.add('active');
+        document.getElementById('view-home').classList.remove('active'); 
+        document.getElementById('view-detail').classList.add('active');
+        document.getElementById('view-notes').style.display = 'none';
         document.getElementById('trip-actions').style.display = 'flex'; document.getElementById('btn-back').style.display = 'block';
         document.getElementById('delete-trip-btn').style.display = 'block'; document.getElementById('mates-btn').style.display = 'block';
         document.getElementById('header-title').innerText = t.title;
@@ -252,7 +265,36 @@
         updatePaidByDropdown(); if (!googleMap) initMap(); renderDayTabs(); renderCombinedList();
     }
 
-    function showHome() { location.reload(); }
+    function showHome() { 
+        document.getElementById('view-home').classList.add('active');
+        document.getElementById('view-detail').classList.remove('active');
+        document.getElementById('view-notes').style.display = 'none';
+        document.getElementById('trip-actions').style.display = 'none';
+        document.getElementById('btn-back').style.display = 'none';
+        document.getElementById('header-title').innerText = '我的行程';
+        renderTripList();
+    }
+    
+    function showNotesView() {
+        document.getElementById('view-home').classList.remove('active');
+        document.getElementById('view-notes').style.display = 'block';
+        document.getElementById('btn-back').style.display = 'block';
+        document.getElementById('header-title').innerText = '旅行備忘錄';
+        // 載入備忘錄內容（假設存在 myTrips 的一個特殊 meta 欄位或者獨立對象）
+        const globalNotes = myTrips.find(t => t.id === 'global-notes') || { content: '' };
+        document.getElementById('notes-content').value = globalNotes.content;
+    }
+
+    function saveNotes() {
+        let globalNotesIdx = myTrips.findIndex(t => t.id === 'global-notes');
+        const content = document.getElementById('notes-content').value;
+        if (globalNotesIdx === -1) {
+            myTrips.push({ id: 'global-notes', title: '備忘錄數據', content: content });
+        } else {
+            myTrips[globalNotesIdx].content = content;
+        }
+        syncToCloud().then(() => alert('備忘錄已儲存！'));
+    }
     function deleteEntireTrip() {
         if(confirm('確定永久刪除整個旅行？')) {
             myTrips = myTrips.filter(t => t.id !== currentTripId);
