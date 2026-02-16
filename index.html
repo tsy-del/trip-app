@@ -388,7 +388,7 @@
     function openHotelModal() {
         const trip = myTrips.find(x => x.id === currentTripId), hotel = (trip.hotels || {})[currentDay] || { name: '', address: '' };
         document.getElementById('hotel-name-input').value = hotel.name; document.getElementById('hotel-addr-input').value = hotel.address;
-        const s = new Date(trip.startDate), e = new Date(t.endDate), d = Math.ceil((e - s) / 86400000) + 1;
+        const s = new Date(trip.startDate), e = new Date(trip.endDate), d = Math.ceil((e - s) / 86400000) + 1;
         let h = ''; for(let i=1; i<=d; i++) h += `<label><input type="checkbox" class="hotel-day-check" value="${i}" ${i==currentDay?'checked':''}> Day ${i}</label>`;
         document.getElementById('hotel-day-selector').innerHTML = h; document.getElementById('hotel-modal').classList.add('active');
         new google.maps.places.Autocomplete(document.getElementById('hotel-addr-input')).bindTo('bounds', googleMap);
