@@ -167,6 +167,15 @@
       "Katrina",
       "BB"
     ],
-    "hotels": {}
+    "hotels": {
+      "1": {
+        "name": "皇家季節酒店台北館 (Royal Seasons Hotel Taipei-Nanjing W)",
+        "address": "南京西路330號, 大同區, 台北市, 台灣, 10345"
+      },
+      "2": {
+        "name": "皇家季節酒店台北館 (Royal Seasons Hotel Taipei-Nanjing W)",
+        "address": "南京西路330號, 大同區, 台北市, 台灣, 10345"
+      }
+    }
   }
 ]
