@@ -231,6 +231,10 @@
       {
         "text": "充電器",
         "done": false
+      },
+      {
+        "text": "旅行插座",
+        "done": false
       }
     ]
   }
