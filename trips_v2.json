@@ -13,7 +13,8 @@
         "name": "🚀 抵達機場辦理登機 & 報到",
         "subtitle": "建議提前2小時到達",
         "location": "香港國際機場",
-        "remark": ""
+        "remark": "",
+        "fromTrip": "台灣"
       },
       {
         "id": 1771211081244,
@@ -23,7 +24,8 @@
         "name": "✈️ 大灣區航空 HB702",
         "subtitle": "選項: ",
         "location": "",
-        "remark": "注意：抵達時間為當地時間"
+        "remark": "注意：抵達時間為當地時間",
+        "fromTrip": "台灣"
       },
       {
         "id": 1771211128765,
@@ -33,7 +35,8 @@
         "name": "🚀 抵達機場辦理登機 & 報到",
         "subtitle": "建議提前2小時到達",
         "location": "臺灣桃園國際機場",
-        "remark": ""
+        "remark": "",
+        "fromTrip": "台灣"
       },
       {
         "id": 1771211128766,
@@ -43,7 +46,8 @@
         "name": "✈️ 大灣區航空 HB705",
         "subtitle": "選項: ",
         "location": "",
-        "remark": "注意：抵達時間為當地時間"
+        "remark": "注意：抵達時間為當地時間",
+        "fromTrip": "台灣"
       },
       {
         "id": 1771211601837,
@@ -53,7 +57,8 @@
         "name": "酒店＞臺灣桃園國際機場",
         "subtitle": "",
         "location": "南京西路330號, 大同區, 台北市, 台灣, 10345",
-        "remark": ""
+        "remark": "",
+        "fromTrip": "台灣"
       },
       {
         "id": 1771211901990,
@@ -63,7 +68,8 @@
         "name": "home ＞機場",
         "subtitle": "",
         "location": "香港九龍馬頭涌宋皇臺道38號",
-        "remark": ""
+        "remark": "",
+        "fromTrip": "台灣"
       }
     ],
     "expenses": [],

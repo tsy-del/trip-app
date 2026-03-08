@@ -107,7 +107,7 @@
 
 <header>
     <div class="back-btn" id="btn-back" onclick="showHome()" style="display:none;">❮</div>
-    <h1 id="header-title">我的行程 (v1.2)</h1>
+    <h1 id="header-title">我的行程 (v1.4)</h1>
     <div class="header-right">
         <button id="checklist-btn" onclick="showChecklistView()">✅ 清單</button>
         <button id="notes-btn" onclick="showNotesView()">📝 備忘</button>
@@ -285,35 +285,26 @@
             const data = JSON.parse(decodeURIComponent(escape(atob((await resp.json()).content))));
             
             if (data && Array.isArray(data)) {
-                // 【數據自癒邏輯】自動修復跨行程污染
+                // 【數據自癒邏輯 v2】極度嚴格過濾
                 const cleanData = data.map(trip => {
-                    // 如果呢個 Trip 入面有唔屬於佢嘅 Item，就剔走佢
+                    // 1. 隔離 Items: 必須 fromTrip 標記完全吻合
                     if (trip.items) {
-                        trip.items = trip.items.filter(item => !item.fromTrip || item.fromTrip === trip.title);
+                        trip.items = trip.items.filter(item => item.fromTrip === trip.title);
                     }
+                    // 2. 隔離 Expenses
                     if (trip.expenses) {
-                        trip.expenses = trip.expenses.filter(item => !item.fromTrip || item.fromTrip === trip.title);
+                        trip.expenses = trip.expenses.filter(item => item.fromTrip === trip.title);
+                    }
+                    // 3. 隔離 Hotels: 如果 Hotel 係台灣但 Trip 係福岡，直接清空
+                    if (trip.title === "福岡" && trip.hotels) {
+                        const hasTaipei = Object.values(trip.hotels).some(h => (h.name+h.address).includes("台北") || (h.name+h.address).includes("台灣"));
+                        if (hasTaipei) trip.hotels = {};
                     }
                     return trip;
                 });
 
-                // 將剔走咗嘅 Item 塞返去正確嘅 Trip
-                data.forEach(sourceTrip => {
-                    const wrongItems = (sourceTrip.items || []).filter(item => item.fromTrip && item.fromTrip !== sourceTrip.title);
-                    wrongItems.forEach(item => {
-                        const targetTrip = cleanData.find(t => t.title === item.fromTrip);
-                        if (targetTrip) {
-                            if (!targetTrip.items) targetTrip.items = [];
-                            // 防止重複塞入
-                            if (!targetTrip.items.find(x => x.id === item.id)) {
-                                targetTrip.items.push(item);
-                            }
-                        }
-                    });
-                });
-
                 myTrips = cleanData;
-                console.log('Data synced and healed:', myTrips.length, 'trips');
+                console.log('Data synced and strictly healed:', myTrips.length, 'trips');
                 renderTripList();
                 if (currentTripId) renderCombinedList();
             }
