@@ -219,9 +219,27 @@
 <div id="mates-modal" class="modal"><div class="modal-content"><h3>👥 旅伴管理</h3><div class="form-row"><label>名字 (逗號分隔)</label><input type="text" id="mates-input"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('mates-modal').classList.remove('active')">取消</button><button style="background:var(--primary); color:white;" onclick="saveMates()">儲存</button></div></div></div>
 <div id="trip-modal" class="modal"><div class="modal-content"><h3>🌍 新增旅行</h3><div class="form-row"><label>名稱</label><input type="text" id="new-trip-title"></div><div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>開始</label><input type="date" id="new-trip-start"></div><div style="flex:1;"><label>結束</label><input type="date" id="new-trip-end"></div></div><div class="modal-footer"><button style="background:#eee;" onclick="closeTripModal()">取消</button><button style="background:var(--primary);color:white;" onclick="addNewTrip()">建立</button></div></div></div>
 <div id="hotel-modal" class="modal"><div class="modal-content"><h3>🏨 設定住宿</h3><div class="form-row"><label>酒店</label><input type="text" id="hotel-name-input"></div><div class="form-row"><label>地址</label><input type="text" id="hotel-addr-input"></div><div id="hotel-day-selector" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('hotel-modal').classList.remove('active')">取消</button><button style="background:#2196f3; color:white;" onclick="saveHotel()">儲存</button></div></div></div>
-<div id="copy-checklist-modal" class="modal"><div class="modal-content"><h3>📋 複製行李清單</h3><p style="font-size: 0.8em; color: #666;">選擇要從哪個行程複製清單（現有清單會被覆蓋）：</p><div id="trip-copy-list" style="margin: 15px 0;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('copy-checklist-modal').classList.remove('active')">取消</button></div></div></div>
+<div id="copy-checklist-modal" class="modal"><div class="modal-content"><h3>📋 複製行李清單</h3><p style="font-size: 0.8em; color: #666;">選擇要從哪個行程複製清單（現有清單會被覆蓋）：</p><div id="trip-copy-list" style="margin: 15px 0;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('copy-checklist-modal').classList.remove('active')">取消</button></div></div>    <div style="margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 0.8em;">
+        <button onclick="showDebugInfo()" style="background: #666; color: white; border: none; padding: 8px 15px; border-radius: 5px; width: 100%;">🔧 顯示 Debug 資訊</button>
+        <div id="debug-info" style="display: none; margin-top: 10px; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></div>
+    </div>
+</div>
 
 <script>
+    function showDebugInfo() {
+        const debugDiv = document.getElementById('debug-info');
+        const currentTrip = myTrips.find(t => t.id === currentTripId);
+        debugDiv.style.display = debugDiv.style.display === 'none' ? 'block' : 'none';
+        debugDiv.innerText = JSON.stringify({
+            currentTripId: currentTripId,
+            currentDay: currentDay,
+            currentTripTitle: currentTrip ? currentTrip.title : 'NOT FOUND',
+            currentTripItemCount: currentTrip ? (currentTrip.items || []).length : 0,
+            allTrips: myTrips.map(t => ({ id: t.id, title: t.title, itemCount: (t.items || []).length })),
+            editingItemId: editingItemId,
+            timestamp: new Date().toISOString()
+        }, null, 2);
+    }
     const DATA_REPO = 'tsy-del/trip-app';
     let GITHUB_TOKEN = localStorage.getItem('app_token'), currentUser = localStorage.getItem('app_user');
     let myTrips = [], currentTripId = null, currentDay = 1, googleMap = null, markers = [], directionsRenderer = null, chartInstance = null, editingItemId = null;
