@@ -175,7 +175,20 @@
     "title": "福岡",
     "startDate": "2026-04-01",
     "endDate": "2026-04-08",
-    "items": [],
+    "items": [
+      {
+        "id": 1772989107366,
+        "day": 1,
+        "type": "flight",
+        "time": "08:15",
+        "endTime": "12:45",
+        "name": "大灣區 HB2368",
+        "airline": "大灣區",
+        "flightNo": "HB2368",
+        "luggage": "",
+        "subtitle": "航班 HB2368"
+      }
+    ],
     "expenses": [],
     "mates": [
       "Tsy"
