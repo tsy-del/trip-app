@@ -238,6 +238,20 @@
         "lastUpdated": "9/3/2026 上午2:42:22",
         "fromTrip": "福岡",
         "createdBy": "Tsy"
+      },
+      {
+        "id": 1772995750752,
+        "day": 1,
+        "type": "normal",
+        "time": "09:00",
+        "endTime": "",
+        "name": "福岡",
+        "subtitle": "",
+        "location": "",
+        "remark": "",
+        "lastUpdated": "9/3/2026 上午2:49:10",
+        "fromTrip": "福岡",
+        "createdBy": "Tsy"
       }
     ],
     "expenses": [],
