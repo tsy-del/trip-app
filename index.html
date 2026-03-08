@@ -745,7 +745,10 @@
 
         if (editingItemId) {
             const idx = trip.items.findIndex(x => x.id === editingItemId);
-            trip.items[idx] = { ...trip.items[idx], ...itemData };
+            // 確保只更新當前行程的項目
+            if (idx !== -1) {
+                trip.items[idx] = { ...trip.items[idx], ...itemData };
+            }
         } else {
             trip.items.push({ 
                 id: Date.now(), 
