@@ -175,7 +175,22 @@
     "title": "福岡",
     "startDate": "2026-04-01",
     "endDate": "2026-04-08",
-    "items": [],
+    "items": [
+      {
+        "id": 1772990179717,
+        "day": 1,
+        "type": "flight",
+        "time": "01:16",
+        "endTime": "01:16",
+        "name": "hd ",
+        "airline": "hd",
+        "flightNo": "",
+        "luggage": "",
+        "subtitle": "航班 ",
+        "lastUpdated": "9/3/2026 上午1:16:19",
+        "fromTrip": "福岡"
+      }
+    ],
     "expenses": [],
     "mates": [
       "Tsy"
