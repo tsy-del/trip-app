@@ -270,6 +270,7 @@
         location.reload();
     }
     const DATA_REPO = 'tsy-del/trip-app';
+    const DATA_FILE = 'trips_v3.json'; // 升級數據文件名以繞過極致緩存
     let GITHUB_TOKEN = localStorage.getItem('app_token'), currentUser = localStorage.getItem('app_user');
     let myTrips = [], currentTripId = null, currentDay = 1, googleMap = null, markers = [], directionsRenderer = null, chartInstance = null, editingItemId = null;
 
@@ -280,7 +281,7 @@
 
     async function syncFromCloud() {
         try {
-            const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json?t=${Date.now()}`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } });
+            const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/${DATA_FILE}?t=${Date.now()}`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } });
             if (!resp.ok) return renderTripList();
             const data = JSON.parse(decodeURIComponent(escape(atob((await resp.json()).content))));
             
@@ -317,7 +318,7 @@
     async function syncToCloud() {
         try {
             // 先重新從雲端攞一次最新的 sha，防止 overwrite 咗人哋嘅嘢或者撞版本
-            const getFile = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json?t=${Date.now()}`, { 
+            const getFile = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/${DATA_FILE}?t=${Date.now()}`, { 
                 headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } 
             });
             const file = await getFile.json();
@@ -325,7 +326,7 @@
             // 確保 myTrips 係最新狀態再轉成 base64
             const content = btoa(unescape(encodeURIComponent(JSON.stringify(myTrips, null, 2))));
             
-            await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json`, {
+            await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/${DATA_FILE}`, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 

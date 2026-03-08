@@ -1,0 +1,251 @@
+[
+  {
+    "id": "trip-1770272366916",
+    "title": "台灣",
+    "startDate": "2026-03-13",
+    "endDate": "2026-03-15",
+    "items": [
+      {
+        "id": 1771211081243,
+        "day": 1,
+        "time": "06:25",
+        "endTime": "08:25",
+        "name": "🚀 抵達機場辦理登機 & 報到",
+        "subtitle": "建議提前2小時到達",
+        "location": "香港國際機場",
+        "remark": "",
+        "fromTrip": "台灣"
+      },
+      {
+        "id": 1771211081244,
+        "day": 1,
+        "time": "08:25",
+        "endTime": "10:10",
+        "name": "✈️ 大灣區航空 HB702",
+        "subtitle": "選項: ",
+        "location": "",
+        "remark": "注意：抵達時間為當地時間",
+        "fromTrip": "台灣"
+      },
+      {
+        "id": 1771211128765,
+        "day": 3,
+        "time": "19:40",
+        "endTime": "21:40",
+        "name": "🚀 抵達機場辦理登機 & 報到",
+        "subtitle": "建議提前2小時到達",
+        "location": "臺灣桃園國際機場",
+        "remark": "",
+        "fromTrip": "台灣"
+      },
+      {
+        "id": 1771211128766,
+        "day": 3,
+        "time": "21:40",
+        "endTime": "23:35",
+        "name": "✈️ 大灣區航空 HB705",
+        "subtitle": "選項: ",
+        "location": "",
+        "remark": "注意：抵達時間為當地時間",
+        "fromTrip": "台灣"
+      },
+      {
+        "id": 1771211601837,
+        "day": 3,
+        "time": "19:00",
+        "endTime": "19:40",
+        "name": "酒店＞臺灣桃園國際機場",
+        "subtitle": "",
+        "location": "南京西路330號, 大同區, 台北市, 台灣, 10345",
+        "remark": "",
+        "fromTrip": "台灣"
+      },
+      {
+        "id": 1771211901990,
+        "day": 1,
+        "time": "05:25",
+        "endTime": "06:25",
+        "name": "home ＞機場",
+        "subtitle": "",
+        "location": "香港九龍馬頭涌宋皇臺道38號",
+        "remark": "",
+        "fromTrip": "台灣"
+      }
+    ],
+    "expenses": [],
+    "mates": [
+      "SY",
+      "Katrina",
+      "BB"
+    ],
+    "hotels": {
+      "1": {
+        "name": "皇家季節酒店台北館 (Royal Seasons Hotel Taipei-Nanjing W)",
+        "address": "南京西路330號, 大同區, 台北市, 台灣, 10345"
+      },
+      "2": {
+        "name": "皇家季節酒店台北館 (Royal Seasons Hotel Taipei-Nanjing W)",
+        "address": "南京西路330號, 大同區, 台北市, 台灣, 10345"
+      }
+    },
+    "checklist": [
+      {
+        "text": "Passport",
+        "done": false
+      },
+      {
+        "text": "身份証",
+        "done": false
+      },
+      {
+        "text": "銀包",
+        "done": false
+      },
+      {
+        "text": "毛巾",
+        "done": false
+      },
+      {
+        "text": "牙刷",
+        "done": false
+      },
+      {
+        "text": "充電器",
+        "done": false
+      },
+      {
+        "text": "旅行插座",
+        "done": false
+      },
+      {
+        "text": "usb 線",
+        "done": false
+      },
+      {
+        "text": "鬚刨",
+        "done": false
+      },
+      {
+        "text": "紙巾",
+        "done": false
+      },
+      {
+        "text": "衫褲襪",
+        "done": false
+      },
+      {
+        "text": "SIM 卡",
+        "done": false
+      },
+      {
+        "text": "環保袋／膠袋",
+        "done": false
+      },
+      {
+        "text": "換片墊",
+        "done": false
+      },
+      {
+        "text": "尿片",
+        "done": false
+      },
+      {
+        "text": "紗巾",
+        "done": false
+      },
+      {
+        "text": "奶粉",
+        "done": false
+      },
+      {
+        "text": "BB Cream",
+        "done": false
+      },
+      {
+        "text": "BB餐具",
+        "done": false
+      },
+      {
+        "text": "水樽",
+        "done": false
+      },
+      {
+        "text": "風扇",
+        "done": false
+      }
+    ],
+    "notes": "士林夜市\n饒河街觀光夜市\n寧夏夜市\n臨江街夜市 / 通化夜市\n公館夜市\n師大夜市\n華西街觀光夜市\n南機場夜市\n延三夜市\n\n\nXpark 水族館"
+  },
+  {
+    "id": "trip-1772988721884",
+    "title": "福岡",
+    "startDate": "2026-04-01",
+    "endDate": "2026-04-08",
+    "items": [
+      {
+        "id": 1772990307523,
+        "day": 1,
+        "type": "flight",
+        "time": "01:18",
+        "endTime": "01:22",
+        "name": "hz ",
+        "airline": "hz",
+        "flightNo": "",
+        "luggage": "",
+        "subtitle": "航班 ",
+        "lastUpdated": "9/3/2026 上午1:18:27",
+        "fromTrip": "福岡"
+      },
+      {
+        "id": 1772990330922,
+        "day": 1,
+        "type": "flight",
+        "time": "01:18",
+        "endTime": "01:18",
+        "name": "id dh",
+        "airline": "id",
+        "flightNo": "dh",
+        "luggage": "",
+        "subtitle": "航班 dh",
+        "lastUpdated": "9/3/2026 上午1:18:50",
+        "fromTrip": "福岡"
+      },
+      {
+        "id": 1772990439119,
+        "day": 1,
+        "type": "normal",
+        "time": "09:00",
+        "endTime": "",
+        "name": "",
+        "subtitle": "",
+        "location": "",
+        "remark": "",
+        "lastUpdated": "9/3/2026 上午1:20:39",
+        "fromTrip": "福岡",
+        "createdBy": "Tsy"
+      },
+      {
+        "id": 1772995342089,
+        "day": 1,
+        "type": "flight",
+        "time": "02:42",
+        "endTime": "02:42",
+        "name": " ",
+        "airline": "",
+        "flightNo": "",
+        "luggage": "",
+        "subtitle": "航班 ",
+        "lastUpdated": "9/3/2026 上午2:42:22",
+        "fromTrip": "福岡",
+        "createdBy": "Tsy"
+      }
+    ],
+    "expenses": [],
+    "mates": [
+      "Tsy"
+    ],
+    "hotels": {},
+    "checklist": [],
+    "notes": ""
+  }
+]
