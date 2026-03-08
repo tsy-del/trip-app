@@ -199,6 +199,20 @@
         "flightNo": "HB2368",
         "luggage": "",
         "subtitle": "航班 HB2368"
+      },
+      {
+        "id": 1772989328649,
+        "day": 1,
+        "type": "flight",
+        "time": "01:02",
+        "endTime": "01:02",
+        "name": "HB2368 HB2368",
+        "airline": "HB2368",
+        "flightNo": "HB2368",
+        "luggage": "",
+        "subtitle": "航班 HB2368",
+        "lastUpdated": "9/3/2026 上午1:02:08",
+        "fromTrip": "福岡"
       }
     ],
     "expenses": [],
