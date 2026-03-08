@@ -100,11 +100,14 @@
     <input type="text" id="user-name" placeholder="你的名字">
     <input type="password" id="access-key" placeholder="GitHub Token">
     <button onclick="handleLogin()">登入並同步</button>
+    <div style="margin-top: 20px;">
+        <button onclick="clearAndReload()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 10px 20px; border-radius: 12px; font-size: 0.8em; cursor: pointer;">🧹 清除快取重新載入</button>
+    </div>
 </div>
 
 <header>
     <div class="back-btn" id="btn-back" onclick="showHome()" style="display:none;">❮</div>
-    <h1 id="header-title">我的行程</h1>
+    <h1 id="header-title">我的行程 (v1.2)</h1>
     <div class="header-right">
         <button id="checklist-btn" onclick="showChecklistView()">✅ 清單</button>
         <button id="notes-btn" onclick="showNotesView()">📝 備忘</button>
@@ -118,6 +121,11 @@
 <div class="container">
     <!-- Home View -->
     <div id="view-home" class="active">
+        <div style="margin-bottom: 20px; padding: 12px; background: #eee; border-radius: 12px; display: flex; gap: 8px;">
+            <button onclick="clearAndReload()" style="flex: 1; background: #ff5252; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🧹 清除快取重置</button>
+            <button onclick="showDebugInfo()" style="flex: 1; background: #666; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🔧 系統偵錯</button>
+        </div>
+        <div id="debug-info" style="display: none; margin-bottom: 15px; padding: 10px; background: #333; color: #0f0; border-radius: 8px; font-family: monospace; font-size: 0.7em; white-space: pre-wrap; word-break: break-all;"></div>
         <div id="trip-list"></div>
         <button style="width:100%; background:var(--secondary); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;" onclick="openTripModal()">➕ 新增行程 (Agent T 已更新)</button>
     </div>
@@ -219,12 +227,7 @@
 <div id="mates-modal" class="modal"><div class="modal-content"><h3>👥 旅伴管理</h3><div class="form-row"><label>名字 (逗號分隔)</label><input type="text" id="mates-input"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('mates-modal').classList.remove('active')">取消</button><button style="background:var(--primary); color:white;" onclick="saveMates()">儲存</button></div></div></div>
 <div id="trip-modal" class="modal"><div class="modal-content"><h3>🌍 新增旅行</h3><div class="form-row"><label>名稱</label><input type="text" id="new-trip-title"></div><div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>開始</label><input type="date" id="new-trip-start"></div><div style="flex:1;"><label>結束</label><input type="date" id="new-trip-end"></div></div><div class="modal-footer"><button style="background:#eee;" onclick="closeTripModal()">取消</button><button style="background:var(--primary);color:white;" onclick="addNewTrip()">建立</button></div></div></div>
 <div id="hotel-modal" class="modal"><div class="modal-content"><h3>🏨 設定住宿</h3><div class="form-row"><label>酒店</label><input type="text" id="hotel-name-input"></div><div class="form-row"><label>地址</label><input type="text" id="hotel-addr-input"></div><div id="hotel-day-selector" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('hotel-modal').classList.remove('active')">取消</button><button style="background:#2196f3; color:white;" onclick="saveHotel()">儲存</button></div></div></div>
-<div id="copy-checklist-modal" class="modal"><div class="modal-content"><h3>📋 複製行李清單</h3><p style="font-size: 0.8em; color: #666;">選擇要從哪個行程複製清單（現有清單會被覆蓋）：</p><div id="trip-copy-list" style="margin: 15px 0;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('copy-checklist-modal').classList.remove('active')">取消</button></div></div>    <div style="margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 0.8em;">
-        <button onclick="showDebugInfo()" style="background: #666; color: white; border: none; padding: 8px 15px; border-radius: 5px; width: 100%; margin-bottom: 8px;">🔧 顯示 Debug 資訊</button>
-        <button onclick="clearAndReload()" style="background: #ff5252; color: white; border: none; padding: 8px 15px; border-radius: 5px; width: 100%;">🧹 清除快取重新載入</button>
-        <div id="debug-info" style="display: none; margin-top: 10px; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></div>
-    </div>
-</div>
+<div id="copy-checklist-modal" class="modal"><div class="modal-content"><h3>📋 複製行李清單</h3><p style="font-size: 0.8em; color: #666;">選擇要從哪個行程複製清單（現有清單會被覆蓋）：</p><div id="trip-copy-list" style="margin: 15px 0;"></div><div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('copy-checklist-modal').classList.remove('active')">取消</button></div></div></div>
 
 <script>
     function showDebugInfo() {
@@ -243,7 +246,7 @@
     }
     
     function clearAndReload() {
-        if (confirm('確定要清除所有本地緩存並重新載入嗎？\n\n這會：\n1. 清除 localStorage\n2. 強制重新從雲端同步\n3. 重新整理頁面')) {
+        if (confirm('確定要清除所有本地快取並重新載入嗎？\n\n這會清除登入狀態並強制從雲端重新下載數據。')) {
             localStorage.clear();
             location.reload();
         }
