@@ -189,6 +189,20 @@
         "subtitle": "航班 ",
         "lastUpdated": "9/3/2026 上午1:16:19",
         "fromTrip": "福岡"
+      },
+      {
+        "id": 1772990307523,
+        "day": 1,
+        "type": "flight",
+        "time": "01:18",
+        "endTime": "01:22",
+        "name": "hz ",
+        "airline": "hz",
+        "flightNo": "",
+        "luggage": "",
+        "subtitle": "航班 ",
+        "lastUpdated": "9/3/2026 上午1:18:27",
+        "fromTrip": "福岡"
       }
     ],
     "expenses": [],
