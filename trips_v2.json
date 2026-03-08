@@ -217,6 +217,21 @@
         "lastUpdated": "9/3/2026 上午1:20:39",
         "fromTrip": "福岡",
         "createdBy": "Tsy"
+      },
+      {
+        "id": 1772995342089,
+        "day": 1,
+        "type": "flight",
+        "time": "02:42",
+        "endTime": "02:42",
+        "name": " ",
+        "airline": "",
+        "flightNo": "",
+        "luggage": "",
+        "subtitle": "航班 ",
+        "lastUpdated": "9/3/2026 上午2:42:22",
+        "fromTrip": "福岡",
+        "createdBy": "Tsy"
       }
     ],
     "expenses": [],
