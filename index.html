@@ -262,12 +262,38 @@
             const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json?t=${Date.now()}`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } });
             if (!resp.ok) return renderTripList();
             const data = JSON.parse(decodeURIComponent(escape(atob((await resp.json()).content))));
-            // 只有當新數據真的存在且有效時才覆蓋，防止因網路延遲導致 myTrips 被清空
+            
             if (data && Array.isArray(data)) {
-                myTrips = data;
-                console.log('Data synced from cloud:', myTrips.length, 'trips');
+                // 【數據自癒邏輯】自動修復跨行程污染
+                const cleanData = data.map(trip => {
+                    // 如果呢個 Trip 入面有唔屬於佢嘅 Item，就剔走佢
+                    if (trip.items) {
+                        trip.items = trip.items.filter(item => !item.fromTrip || item.fromTrip === trip.title);
+                    }
+                    if (trip.expenses) {
+                        trip.expenses = trip.expenses.filter(item => !item.fromTrip || item.fromTrip === trip.title);
+                    }
+                    return trip;
+                });
+
+                // 將剔走咗嘅 Item 塞返去正確嘅 Trip
+                data.forEach(sourceTrip => {
+                    const wrongItems = (sourceTrip.items || []).filter(item => item.fromTrip && item.fromTrip !== sourceTrip.title);
+                    wrongItems.forEach(item => {
+                        const targetTrip = cleanData.find(t => t.title === item.fromTrip);
+                        if (targetTrip) {
+                            if (!targetTrip.items) targetTrip.items = [];
+                            // 防止重複塞入
+                            if (!targetTrip.items.find(x => x.id === item.id)) {
+                                targetTrip.items.push(item);
+                            }
+                        }
+                    });
+                });
+
+                myTrips = cleanData;
+                console.log('Data synced and healed:', myTrips.length, 'trips');
                 renderTripList();
-                // 如果正在查看某個行程，重新渲染列表
                 if (currentTripId) renderCombinedList();
             }
         } catch (e) { 
@@ -465,16 +491,29 @@
 
     function renderCombinedList() {
         const t = myTrips.find(x=>x.id===currentTripId);
-        if (!t) return; // 安全檢查
-        const items = (t.items || []).filter(x=>x.day===currentDay).sort((a,b)=>a.time.localeCompare(b.time));
-        const exps = (t.expenses || []).filter(x=>x.day===currentDay);
+        if (!t) return; 
+        
+        // 【強力過濾】除左過濾日子，仲要過濾埋呢個 Item 係咪真係屬於呢個 Trip
+        // 如果 Item 入面有 fromTrip 標記但同目前 Trip Title 唔夾，就唔顯示 (防止污染)
+        const items = (t.items || []).filter(x => {
+            const isCorrectDay = x.day === currentDay;
+            const isCorrectTrip = !x.fromTrip || x.fromTrip === t.title;
+            return isCorrectDay && isCorrectTrip;
+        }).sort((a,b)=>a.time.localeCompare(b.time));
+
+        const exps = (t.expenses || []).filter(x => {
+            const isCorrectDay = x.day === currentDay;
+            const isCorrectTrip = !x.fromTrip || x.fromTrip === t.title;
+            return isCorrectDay && isCorrectTrip;
+        });
+
         if (!t.hotels) t.hotels = {}; const hotel = t.hotels[currentDay];
         document.getElementById('hotel-name-display').innerText = hotel ? hotel.name : '尚未設定住宿';
         document.getElementById('hotel-addr-display').innerText = hotel ? hotel.address : '點擊在此設定酒店地址';
+        
         let html = '';
         items.forEach(item => {
             const isFlight = item.type === 'flight';
-            // 顯示加入時間、所屬行程同埋操作人
             const metaInfo = (item.lastUpdated || item.fromTrip || item.createdBy) 
                 ? `<div style="font-size:0.65em; color:#bbb; margin-top:4px; border-top:1px dashed #eee; padding-top:4px;">
                     🕒 ${item.lastUpdated || '未知時間'} | 🌍 ${item.fromTrip || t.title} | 👤 ${item.createdBy || '未知'}
@@ -496,6 +535,7 @@
                 </div>
             </div>`;
         });
+        
         exps.forEach(e => {
             html += `<div class="expense-card" onclick="toggleExpenseDetails()"><div>💸 <b>${e.name}</b><br><small>${e.paidBy} 支付</small></div><div class="exp-amount">${e.amount.toLocaleString()}</div></div>`;
         });
