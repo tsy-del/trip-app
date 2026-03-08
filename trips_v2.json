@@ -199,6 +199,18 @@
         "flightNo": "HB2368",
         "luggage": "",
         "subtitle": "航班 HB2368"
+      },
+      {
+        "id": 1772989132193,
+        "day": 1,
+        "type": "flight",
+        "time": "00:58",
+        "endTime": "00:58",
+        "name": "HB2368 HB2368",
+        "airline": "HB2368",
+        "flightNo": "HB2368",
+        "luggage": "",
+        "subtitle": "航班 HB2368"
       }
     ],
     "expenses": [],
