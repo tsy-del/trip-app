@@ -169,5 +169,32 @@
       }
     ],
     "notes": "士林夜市\n饒河街觀光夜市\n寧夏夜市\n臨江街夜市 / 通化夜市\n公館夜市\n師大夜市\n華西街觀光夜市\n南機場夜市\n延三夜市\n\n\nXpark 水族館"
+  },
+  {
+    "id": "trip-1772988721884",
+    "title": "福岡",
+    "startDate": "2026-04-01",
+    "endDate": "2026-04-08",
+    "items": [
+      {
+        "id": 1772988788899,
+        "day": 1,
+        "type": "flight",
+        "time": "08:15",
+        "endTime": "12:45",
+        "name": "大灣區 HB2368",
+        "airline": "大灣區",
+        "flightNo": "HB2368",
+        "luggage": "",
+        "subtitle": "航班 HB2368"
+      }
+    ],
+    "expenses": [],
+    "mates": [
+      "Tsy"
+    ],
+    "hotels": {},
+    "checklist": [],
+    "notes": ""
   }
 ]
