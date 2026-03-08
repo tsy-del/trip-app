@@ -235,9 +235,19 @@
         try {
             const resp = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json?t=${Date.now()}`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } });
             if (!resp.ok) return renderTripList();
-            myTrips = JSON.parse(decodeURIComponent(escape(atob((await resp.json()).content))));
-            renderTripList();
-        } catch (e) { renderTripList(); }
+            const data = JSON.parse(decodeURIComponent(escape(atob((await resp.json()).content))));
+            // 只有當新數據真的存在且有效時才覆蓋，防止因網路延遲導致 myTrips 被清空
+            if (data && Array.isArray(data)) {
+                myTrips = data;
+                console.log('Data synced from cloud:', myTrips.length, 'trips');
+                renderTripList();
+                // 如果正在查看某個行程，重新渲染列表
+                if (currentTripId) renderCombinedList();
+            }
+        } catch (e) { 
+            console.error('Cloud sync failed:', e);
+            renderTripList(); 
+        }
     }
 
     async function syncToCloud() {
@@ -417,6 +427,7 @@
 
     function renderCombinedList() {
         const t = myTrips.find(x=>x.id===currentTripId);
+        if (!t) return; // 安全檢查
         const items = (t.items || []).filter(x=>x.day===currentDay).sort((a,b)=>a.time.localeCompare(b.time));
         const exps = (t.expenses || []).filter(x=>x.day===currentDay);
         if (!t.hotels) t.hotels = {}; const hotel = t.hotels[currentDay];
