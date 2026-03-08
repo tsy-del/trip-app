@@ -474,6 +474,13 @@
         let html = '';
         items.forEach(item => {
             const isFlight = item.type === 'flight';
+            // 顯示加入時間、所屬行程同埋操作人
+            const metaInfo = (item.lastUpdated || item.fromTrip || item.createdBy) 
+                ? `<div style="font-size:0.65em; color:#bbb; margin-top:4px; border-top:1px dashed #eee; padding-top:4px;">
+                    🕒 ${item.lastUpdated || '未知時間'} | 🌍 ${item.fromTrip || t.title} | 👤 ${item.createdBy || '未知'}
+                   </div>` 
+                : '';
+
             html += `<div class="item-wrapper" onclick="editItem(${item.id})">
                 <div class="item-card" style="${isFlight ? 'border-left: 5px solid #2196f3; background: #f1f9ff;' : ''}">
                     <div class="item-left">
@@ -484,6 +491,7 @@
                     <div class="item-main">
                         <div class="item-title">${item.name}</div>
                         <div style="font-size:0.8em;color:#888;">${item.subtitle||''}</div>
+                        ${metaInfo}
                     </div>
                 </div>
             </div>`;
@@ -803,7 +811,8 @@
                 luggage: document.getElementById('flight-luggage').value,
                 subtitle: '航班 ' + document.getElementById('flight-no').value,
                 lastUpdated: timestamp,
-                fromTrip: trip.title
+                fromTrip: trip.title,
+                createdBy: currentUser
             };
         } else {
             itemData = {
@@ -815,7 +824,8 @@
                 location: document.getElementById('item-location').value,
                 remark: document.getElementById('item-remark').value,
                 lastUpdated: timestamp,
-                fromTrip: trip.title
+                fromTrip: trip.title,
+                createdBy: currentUser
             };
         }
 
