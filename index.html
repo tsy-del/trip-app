@@ -121,9 +121,10 @@
 <div class="container">
     <!-- Home View -->
     <div id="view-home" class="active">
-        <div style="margin-bottom: 20px; padding: 12px; background: #eee; border-radius: 12px; display: flex; gap: 8px;">
-            <button onclick="clearAndReload()" style="flex: 1; background: #ff5252; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🧹 清除快取重置</button>
-            <button onclick="showDebugInfo()" style="flex: 1; background: #666; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🔧 系統偵錯</button>
+        <div style="margin-bottom: 20px; padding: 12px; background: #eee; border-radius: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
+            <button onclick="clearAndReload()" style="flex: 1; min-width: 140px; background: #ff5252; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🧹 清除快取重置</button>
+            <button onclick="deepCleanData()" style="flex: 1; min-width: 140px; background: #4caf50; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🧼 深度清理歸位</button>
+            <button onclick="showDebugInfo()" style="flex: 1; min-width: 140px; background: #666; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🔧 系統偵錯</button>
         </div>
         <div id="debug-info" style="display: none; margin-bottom: 15px; padding: 10px; background: #333; color: #0f0; border-radius: 8px; font-family: monospace; font-size: 0.7em; white-space: pre-wrap; word-break: break-all;"></div>
         <div id="trip-list"></div>
@@ -234,22 +235,39 @@
         const debugDiv = document.getElementById('debug-info');
         const currentTrip = myTrips.find(t => t.id === currentTripId);
         debugDiv.style.display = debugDiv.style.display === 'none' ? 'block' : 'none';
+        
+        // 增加更詳細的內容檢查
+        const tripSummaries = myTrips.map(t => ({
+            title: t.title,
+            items: (t.items || []).map(i => `${i.name} (${i.fromTrip || 'no-tag'})`)
+        }));
+
         debugDiv.innerText = JSON.stringify({
             currentTripId: currentTripId,
-            currentDay: currentDay,
             currentTripTitle: currentTrip ? currentTrip.title : 'NOT FOUND',
-            currentTripItemCount: currentTrip ? (currentTrip.items || []).length : 0,
-            allTrips: myTrips.map(t => ({ id: t.id, title: t.title, itemCount: (t.items || []).length })),
-            editingItemId: editingItemId,
+            summaries: tripSummaries,
             timestamp: new Date().toISOString()
         }, null, 2);
     }
     
-    function clearAndReload() {
-        if (confirm('確定要清除所有本地快取並重新載入嗎？\n\n這會清除登入狀態並強制從雲端重新下載數據。')) {
-            localStorage.clear();
-            location.reload();
-        }
+    async function deepCleanData() {
+        if (!confirm('確定執行深度數據清理？\n這會將所有帶有「行程標記」的項目搬回正確的行程中。')) return;
+        
+        const allItems = [];
+        myTrips.forEach(t => {
+            if (t.items) {
+                t.items.forEach(i => { if(!i.fromTrip) i.fromTrip = t.title; allItems.push(i); });
+            }
+        });
+
+        // 重新分配
+        myTrips.forEach(t => {
+            t.items = allItems.filter(i => i.fromTrip === t.title);
+        });
+
+        await syncToCloud();
+        alert('深度清理完成！數據已重新歸位。');
+        location.reload();
     }
     const DATA_REPO = 'tsy-del/trip-app';
     let GITHUB_TOKEN = localStorage.getItem('app_token'), currentUser = localStorage.getItem('app_user');
