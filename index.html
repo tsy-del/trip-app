@@ -299,8 +299,16 @@
     }
     
     function showTrip(tid) { 
-        currentTripId = tid; currentDay = 1; editingItemId = null; // 重置編輯 ID，防止跨行程污染
+        currentTripId = tid; currentDay = 1; editingItemId = null;
+        console.log('Switching to trip:', tid);
+        
+        // 強制根據 ID 重新搵一次 Trip 對象
         const t = myTrips.find(x => x.id === tid);
+        if (!t) {
+            console.error('Trip not found:', tid);
+            return;
+        }
+        
         document.getElementById('view-home').classList.remove('active'); 
         document.getElementById('view-detail').classList.add('active');
         document.getElementById('view-notes').classList.remove('active');
@@ -313,7 +321,11 @@
         document.getElementById('checklist-btn').style.display = 'block';
         document.getElementById('header-title').innerText = t.title;
         document.getElementById('data-btn').style.display = (tid === 'osaka-2026' || t.title.includes('大阪')) ? 'block' : 'none';
-        updatePaidByDropdown(); if (!googleMap) initMap(); renderDayTabs(); renderCombinedList();
+        
+        updatePaidByDropdown(); 
+        if (!googleMap) initMap(); 
+        renderDayTabs(); 
+        renderCombinedList(); // 呢度會用新嘅 currentTripId 嚟畫 List
     }
 
     function showHome() { 
