@@ -242,13 +242,28 @@
 
     async function syncToCloud() {
         try {
-            const getFile = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
-            const file = await getFile.json();
-            await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json`, {
-                method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}` },
-                body: JSON.stringify({ message: `Update by ${currentUser}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(myTrips, null, 2)))), sha: file.sha })
+            // 先重新從雲端攞一次最新的 sha，防止 overwrite 咗人哋嘅嘢或者撞版本
+            const getFile = await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json?t=${Date.now()}`, { 
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } 
             });
-        } catch(e) {}
+            const file = await getFile.json();
+            
+            // 確保 myTrips 係最新狀態再轉成 base64
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(myTrips, null, 2))));
+            
+            await fetch(`https://api.github.com/repos/${DATA_REPO}/contents/trips_v2.json`, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    message: `Update by ${currentUser} at ${new Date().toISOString()}`, 
+                    content: content, 
+                    sha: file.sha 
+                })
+            });
+        } catch(e) {
+            console.error('Sync failed:', e);
+            alert('同步失敗，請檢查網絡或重新登入。');
+        }
     }
 
     function renderTripList() { 
@@ -256,7 +271,8 @@
     }
     
     function showTrip(tid) { 
-        currentTripId = tid; currentDay = 1; const t = myTrips.find(x => x.id === tid);
+        currentTripId = tid; currentDay = 1; editingItemId = null; // 重置編輯 ID，防止跨行程污染
+        const t = myTrips.find(x => x.id === tid);
         document.getElementById('view-home').classList.remove('active'); 
         document.getElementById('view-detail').classList.add('active');
         document.getElementById('view-notes').classList.remove('active');
