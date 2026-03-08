@@ -213,6 +213,20 @@
         "subtitle": "航班 HB2368",
         "lastUpdated": "9/3/2026 上午1:02:08",
         "fromTrip": "福岡"
+      },
+      {
+        "id": 1772989956677,
+        "day": 1,
+        "type": "flight",
+        "time": "01:12",
+        "endTime": "01:12",
+        "name": "hk hj",
+        "airline": "hk",
+        "flightNo": "hj",
+        "luggage": "",
+        "subtitle": "航班 hj",
+        "lastUpdated": "9/3/2026 上午1:12:36",
+        "fromTrip": "福岡"
       }
     ],
     "expenses": [],
