@@ -203,6 +203,20 @@
         "subtitle": "航班 dh",
         "lastUpdated": "9/3/2026 上午1:18:50",
         "fromTrip": "福岡"
+      },
+      {
+        "id": 1772990439119,
+        "day": 1,
+        "type": "normal",
+        "time": "09:00",
+        "endTime": "",
+        "name": "",
+        "subtitle": "",
+        "location": "",
+        "remark": "",
+        "lastUpdated": "9/3/2026 上午1:20:39",
+        "fromTrip": "福岡",
+        "createdBy": "Tsy"
       }
     ],
     "expenses": [],
