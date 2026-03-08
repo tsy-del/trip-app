@@ -199,18 +199,6 @@
         "flightNo": "HB2368",
         "luggage": "",
         "subtitle": "航班 HB2368"
-      },
-      {
-        "id": 1772988792365,
-        "day": 1,
-        "type": "flight",
-        "time": "08:15",
-        "endTime": "12:45",
-        "name": "大灣區 HB2368",
-        "airline": "大灣區",
-        "flightNo": "HB2368",
-        "luggage": "",
-        "subtitle": "航班 HB2368"
       }
     ],
     "expenses": [],
