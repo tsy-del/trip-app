@@ -185,7 +185,7 @@
 
 <!-- Modals (保持不變) -->
 <div id="expense-modal" class="modal"><div class="modal-content">
-    <h3>💰 記錄開支</h3>
+    <h3 id="exp-modal-title">💰 記錄開支</h3>
     <div class="form-row"><label>項目名稱</label><input type="text" id="exp-name"></div>
     <div class="form-row" style="display:flex; gap:10px;"><div style="flex:1;"><label>金額</label><input type="number" id="exp-amount"></div><div style="flex:1;"><label>付款人</label><select id="exp-paid-by"></select></div></div>
     <div class="modal-footer"><button style="background:#eee;" onclick="document.getElementById('expense-modal').classList.remove('active')">取消</button><button style="background:#ff9800; color:white;" onclick="saveExpense()">儲存開支</button></div>
@@ -593,6 +593,8 @@
     function deleteEntireTrip() { if(confirm('確定永久刪除整個旅行？')) { myTrips = myTrips.filter(t => t.id !== currentTripId); syncToCloud().then(() => showHome()); } }
     
     function openExpenseModal() { 
+        const trip = myTrips.find(x => x.id === currentTripId);
+        document.getElementById('exp-modal-title').innerText = `💰 記錄開支 (${trip.title} - D${currentDay})`;
         document.getElementById('exp-name').value = '';
         document.getElementById('exp-amount').value = '';
         updatePaidByDropdown(); 
@@ -652,7 +654,8 @@
 
     function openItemModal() { 
         editingItemId = null; 
-        document.getElementById('item-modal-title').innerText = `新增行程 (Day ${currentDay})`; 
+        const trip = myTrips.find(x => x.id === currentTripId);
+        document.getElementById('item-modal-title').innerText = `新增行程 (${trip.title} - D${currentDay})`; 
         document.getElementById('delete-item-btn').style.display = 'none'; 
         document.getElementById('flight-mode-btn').style.display = 'block';
         
@@ -676,14 +679,17 @@
         const nf = document.getElementById('normal-fields');
         const ff = document.getElementById('flight-fields');
         const btn = document.getElementById('flight-mode-btn');
+        const trip = myTrips.find(x => x.id === currentTripId);
         if (nf.style.display === 'none') {
             nf.style.display = 'block';
             ff.style.display = 'none';
             btn.innerText = '✈️ 航班模式';
+            document.getElementById('item-modal-title').innerText = `新增行程 (${trip.title} - D${currentDay})`;
         } else {
             nf.style.display = 'none';
             ff.style.display = 'block';
             btn.innerText = '📍 景點模式';
+            document.getElementById('item-modal-title').innerText = `新增航班 (${trip.title} - D${currentDay})`;
         }
     }
 
@@ -692,7 +698,7 @@
         const trip = myTrips.find(x => x.id === currentTripId);
         const item = trip.items.find(x => x.id === id);
         
-        document.getElementById('item-modal-title').innerText = `編輯行程 (Day ${currentDay})`;
+        document.getElementById('item-modal-title').innerText = `編輯行程 (${trip.title} - D${currentDay})`;
         document.getElementById('flight-mode-btn').style.display = 'none'; // 編輯時暫不提供切換模式
 
         if (item.type === 'flight') {
@@ -735,6 +741,7 @@
         
         const isFlight = document.getElementById('flight-fields').style.display === 'block';
         let itemData = {};
+        const timestamp = new Date().toLocaleString('zh-HK');
 
         if (isFlight) {
             itemData = {
@@ -745,7 +752,9 @@
                 airline: document.getElementById('flight-airline').value,
                 flightNo: document.getElementById('flight-no').value,
                 luggage: document.getElementById('flight-luggage').value,
-                subtitle: '航班 ' + document.getElementById('flight-no').value
+                subtitle: '航班 ' + document.getElementById('flight-no').value,
+                lastUpdated: timestamp,
+                fromTrip: trip.title
             };
         } else {
             itemData = {
@@ -755,7 +764,9 @@
                 name: document.getElementById('item-name').value,
                 subtitle: document.getElementById('item-sub').value,
                 location: document.getElementById('item-location').value,
-                remark: document.getElementById('item-remark').value
+                remark: document.getElementById('item-remark').value,
+                lastUpdated: timestamp,
+                fromTrip: trip.title
             };
         }
 
