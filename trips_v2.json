@@ -64,6 +64,20 @@
         "subtitle": "",
         "location": "香港九龍馬頭涌宋皇臺道38號",
         "remark": ""
+      },
+      {
+        "id": 1772995528394,
+        "day": 1,
+        "type": "normal",
+        "time": "09:00",
+        "endTime": "",
+        "name": "",
+        "subtitle": "",
+        "location": "",
+        "remark": "",
+        "lastUpdated": "9/3/2026 上午2:45:28",
+        "fromTrip": "台灣",
+        "createdBy": "Tsy"
       }
     ],
     "expenses": [],
