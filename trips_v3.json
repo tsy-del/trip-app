@@ -220,5 +220,19 @@
     "hotels": {},
     "checklist": [],
     "notes": ""
+  },
+  {
+    "id": "trip-1773722196481",
+    "title": "tset",
+    "startDate": "2026-04-01",
+    "endDate": "2026-04-08",
+    "items": [],
+    "expenses": [],
+    "mates": [
+      "szeyuen"
+    ],
+    "hotels": {},
+    "checklist": [],
+    "notes": ""
   }
 ]
